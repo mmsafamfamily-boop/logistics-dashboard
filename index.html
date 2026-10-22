@@ -206,3 +206,45 @@
             products[index].stock += userQty;
         } else if (type === 'out') {
             if (products[index].stock >= userQty) {
+products[index].stock -= userQty;
+} else {
+alert("المخزون الحالي لا يكفي");
+}
+}
+updateTable();
+}
+function addNewProduct() {
+const skuInput = document.getElementById('new-sku');
+const categoryInput = document.getElementById('new-category');
+const nameInput = document.getElementById('new-name');
+const descInput = document.getElementById('new-desc');
+const stockInput = document.getElementById('new-stock');
+if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
+alert("الرجاء ملء الرمز واسم المنتج والكمية أولاً");
+return;
+}
+products.push({
+sku: skuInput.value.toUpperCase(),
+category: categoryInput.value,
+name: nameInput.value,
+desc: descInput.value || 'فري سايز',
+stock: parseInt(stockInput.value) || 0,
+isEditing: false
+});
+updateTable();
+skuInput.value = ''; nameInput.value = ''; descInput.value = ''; stockInput.value = '';
+}
+function deleteProduct(index) {
+if (confirm("هل أنت متأكد من حذف هذا الصنف تماماً؟")) {
+products.splice(index, 1);
+updateTable();
+}
+}
+function calculateVolumetric() {
+const l = parseFloat(document.getElementById('box-length').value) || 0;
+const w = parseFloat(document.getElementById('box-width').value) || 0;
+const h = parseFloat(document.getElementById('box-height').value) || 0;
+let volWeight = (l * w * h) / 5000;
+document.getElementById('volume-result').innerText = الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم;
+}
+updateTable();

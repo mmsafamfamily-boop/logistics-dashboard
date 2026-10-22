@@ -3,127 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم اللوجستيات - متجر أناقة للتدريب</title>
+    <title>نظام إدارة العمليات اللوجستية المطور</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #c0392b;
-            --light: #f8f9fa;
-            --dark: #34495e;
+            --primary: #1e3a8a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f3;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
             margin: 0;
             padding: 20px;
-            color: var(--dark);
+            color: var(--text);
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
         header {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 12px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        h1 { margin: 0; font-size: 24px; }
-        .subtitle { font-size: 14px; opacity: 0.8; margin-top: 5px; }
+        h1 { margin: 0; font-size: 26px; }
+        .subtitle { font-size: 14px; opacity: 0.9; margin-top: 8px; }
         
-        /* كروت الإحصائيات */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         .card {
-            background: white;
+            background: var(--card-bg);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--primary);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary);
+            transition: transform 0.2s;
         }
-        .card.success { border-right-color: var(--success); }
-        .card.warning { border-right-color: var(--warning); }
-        .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #7f8c8d; }
-        .card .number { font-size: 28px; font-weight: bold; color: var(--dark); }
+        .card:hover { transform: translateY(-3px); }
+        .card.success { border-top-color: var(--success); }
+        .card.danger { border-top-color: var(--danger); }
+        .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #6b7280; }
+        .card .number { font-size: 32px; font-weight: bold; }
 
-        /* منطقة العمليات والجدول */
         .main-content {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 25px;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .main-content { grid-template-columns: 1fr; }
         }
         .panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
         }
-        .panel h2 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .panel h2 { margin-top: 0; font-size: 20px; padding-bottom: 12px; border-bottom: 2px solid #f3f4f6; }
         
-        /* الجدول */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
             text-align: right;
         }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-        th { background-color: var(--light); color: var(--dark); }
+        th, td { padding: 14px; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f9fafb; color: #4b5563; font-weight: 600; }
+        
         .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 500;
         }
-        .badge.success { background-color: #d4edda; color: var(--success); }
-        .badge.warning { background-color: #fff3cd; color: #d98200; }
+        .badge.success { background-color: #d1fae5; color: #065f46; }
+        .badge.danger { background-color: #fee2e2; color: #991b1b; }
 
-        /* لوحة التحكم التفاعلية */
-        .actions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label { display: block; font-size: 13px; margin-bottom: 5px; color: #4b5563; }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
         .btn {
-            background-color: var(--primary);
+            width: 100%;
             color: white;
             border: none;
             padding: 12px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 600;
+            margin-top: 5px;
             transition: background 0.2s;
-            text-align: center;
         }
-        .btn:hover { filter: brightness(1.2); }
         .btn-success { background-color: var(--success); }
-        .btn-warning { background-color: var(--warning); }
+        .btn-success:hover { background-color: #059669; }
+        .btn-primary { background-color: var(--primary); }
+        .btn-primary:hover { background-color: #1d4ed8; }
         
         .log-box {
-            margin-top: 15px;
-            background: #222;
-            color: #00ff00;
-            padding: 10px;
+            background: #111827;
+            color: #10b981;
+            padding: 12px;
             font-family: monospace;
             font-size: 12px;
-            border-radius: 4px;
-            height: 100px;
+            border-radius: 6px;
+            height: 120px;
             overflow-y: auto;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -131,126 +137,151 @@
 
 <div class="container">
     <header>
-        <h1>لوحة تحكم إدارة اللوجستيات (بيئة تدريبية)</h1>
-        <div class="subtitle">متجر قمصان "أناقة" الناشئ - نظام محاكاة المستودع والشحن</div>
+        <h1>لوحة تحكم إدارة المستودعات والعمليات</h1>
+        <div class="subtitle">بيئة تدريبية تفاعلية متقدمة لمحاكاة التدفق اللوجستي ومراقبة المخزون</div>
     </header>
 
-    <!-- كروت البيانات الإجمالية -->
     <div class="cards-grid">
         <div class="card">
-            <h3>إجمالي المخزون (Total Stock)</h3>
-            <div class="number" id="total-stock">80</div>
+            <h3>إجمالي قطع المخزون</h3>
+            <div class="number" id="total-stock" style="color: var(--primary);">0</div>
         </div>
         <div class="card success">
-            <h3>الطلبات المشحونة (Out)</h3>
-            <div class="number" id="total-out">37</div>
+            <h3>إجمالي المبيعات الخارِجة (Out)</h3>
+            <div class="number" id="total-out" style="color: var(--success);">45</div>
         </div>
-        <div class="card warning">
-            <h3>المهلة الزمنية المعتادة</h3>
-            <div class="number">10 أيام</div>
+        <div class="card danger">
+            <h3>أصناف منخفضة المخزون ⚠️</h3>
+            <div class="number" id="low-stock-count" style="color: var(--danger);">0</div>
         </div>
     </div>
 
     <div class="main-content">
-        <!-- جدول المستودع -->
-        <div class="panel">
-            <h2>حالة المخزون الحالي (Inventory Status)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>رمز المنتج (SKU)</th>
-                        <th>اسم المنتج</th>
-                        <th>المخزون الحالي</th>
-                        <th>حد إعادة الطلب</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody id="inventory-table">
-                    <!-- سيتم ملؤه بواسطة الجافاسكريبت -->
-                </tbody>
-            </table>
+        <div>
+            <!-- جدول المخزون -->
+            <div class="panel">
+                <h2>حالة البضائع الحالية (Inventory List)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>اسم الصنف</th>
+                            <th>الكمية الحالية</th>
+                            <th>حد الأمان</th>
+                            <th>حالة التوفر</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table"></tbody>
+                </table>
+            </div>
+
+            <!-- جدول الموردين المضاف -->
+            <div class="panel">
+                <h2>دليل الموردين وشركات الشحن (Partners)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الجهة</th>
+                            <th>نوع الخدمة</th>
+                            <th>متوسط الـ Lead Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>مصنع الشرق للأقمشة</td>
+                            <td>مورد مواد خام (Supplier)</td>
+                            <td>12 يوم</td>
+                        </tr>
+                        <tr>
+                            <td>شركة أرامكس للخدمات اللوجستية</td>
+                            <td>ناقل محلي (Carrier)</td>
+                            <td>48 ساعة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- لوحة التحكم في المحاكاة -->
+        <!-- لوحة التحكم في العمليات -->
         <div class="panel">
-            <h2>محاكاة العمليات اللوجستية</h2>
-            <div class="actions-list">
-                <button class="btn btn-success" onclick="simulateSale()">🛒 محاكاة عملية بيع (Out)</button>
-                <button class="btn btn-warning" onclick="simulateReceiving()">📦 محاكاة استلام شحنة (In)</button>
+            <h2>تنفيذ حركة لوجستية</h2>
+            
+            <div class="input-group">
+                <label>اختر المنتج المستهدف:</label>
+                <select id="prod-select"></select>
             </div>
-            <h3>سجل العمليات الأخير (Logs)</h3>
-            <div class="log-box" id="log-box">
-                [نظام]: النظام جاهز ومستعد للمحاكاة...
+            
+            <div class="input-group">
+                <label>الكمية (قطع):</label>
+                <input type="number" id="prod-qty" value="1" min="1">
             </div>
+
+            <button class="btn btn-success" onclick="processMovement('out')">🛒 تسجيل مبيعات / صرف شحنة</button>
+            <button class="btn btn-primary" onclick="processMovement('in')" style="margin-top: 10px;">📦 استلام توريد جديد (Receiving)</button>
+
+            <h3 style="margin-top: 25px; font-size: 15px;">سجل حركة البضائع الفوري</h3>
+            <div class="log-box" id="log-box">[نظام]: بوابتك اللوجستية جاهزة للعمل ومراقبة العمليات...</div>
         </div>
     </div>
 </div>
 
 <script>
-    // البيانات الافتراضية للمخزن
     let products = [
-        { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 50, reorder: 10 },
-        { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 30, reorder: 8 }
+        { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 45, reorder: 15 },
+        { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 12, reorder: 15 },
+        { sku: 'SHIRT-BLU-L', name: 'قميص أزرق - لارج', stock: 60, reorder: 20 }
     ];
-    let totalOut = 37;
+    let totalOut = 45;
+
+    function init() {
+        const select = document.getElementById('prod-select');
+        select.innerHTML = '';
+        products.forEach((p, idx) => {
+            select.innerHTML += `<option value="${idx}">${p.name} (${p.sku})</option>`;
+        });
+        updateDOM();
+    }
 
     function updateDOM() {
         const tbody = document.getElementById('inventory-table');
         tbody.innerHTML = '';
         let totalStock = 0;
+        let lowStockCount = 0;
 
         products.forEach(p => {
             totalStock += p.stock;
-            let statusBadge = p.stock <= p.reorder ? 
-                `<span class="badge warning">مخزون منخفض ⚠️</span>` : 
-                `<span class="badge success">متوفر ✅</span>`;
+            let isLow = p.stock <= p.reorder;
+            if(isLow) lowStockCount++;
+
+            let badge = isLow ? 
+                `<span class="badge danger">مخزون منخفض ⚠️</span>` : 
+                `<span class="badge success">مستقر ✅</span>`;
             
             tbody.innerHTML += `
                 <tr>
                     <td><code>${p.sku}</code></td>
                     <td>${p.name}</td>
-                    <td><strong>${p.stock}</strong></td>
+                    <td style="font-weight: bold; color: ${isLow ? 'var(--danger)' : 'inherit'}">${p.stock}</td>
                     <td>${p.reorder}</td>
-                    <td>${statusBadge}</td>
+                    <td>${badge}</td>
                 </tr>
             `;
         });
 
         document.getElementById('total-stock').innerText = totalStock;
         document.getElementById('total-out').innerText = totalOut;
+        document.getElementById('low-stock-count').innerText = lowStockCount;
     }
 
-    function addLog(message) {
+    function addLog(msg) {
         const logBox = document.getElementById('log-box');
         const time = new Date().toLocaleTimeString('ar-EG', {hour12:false});
-        logBox.innerHTML = `[${time}] ${message}<br>` + logBox.innerHTML;
+        logBox.innerHTML = `[${time}] ${msg}<br>` + logBox.innerHTML;
     }
 
-    // محاكاة بيع قميص
-    function simulateSale() {
-        // نختار منتج عشوائي للبيع
-        let p = products[Math.floor(Math.random() * products.length)];
-        if(p.stock > 0) {
-            p.stock -= 1;
-            totalOut += 1;
-            addLog(`عملية بيع ناجحة! تم سحب وتغليف (Picking & Packing) للمنتج ${p.sku}`);
-            updateDOM();
-        } else {
-            addLog(`فشلت العملية: المنتج ${p.sku} نفذ تماماً من المخزن!`);
-        }
-    }
+    function processMovement(type) {
+        const idx = document.getElementById('prod-select').value;
+        const qty = parseInt(document.getElementById('prod-qty').value) || 1;
+        let p = products[idx];
 
-    // محاكاة استلام بضاعة جديدة
-    function simulateReceiving() {
-        let p = products[Math.floor(Math.random() * products.length)];
-        let qty = 20; // نستلم 20 قطعة جديدة
-        p.stock += qty;
-        addLog(`استلام بضاعة (Receiving): تم توريد +${qty} قطع للمنتج ${p.sku}`);
-        updateDOM();
-    }
-
-    // التشغيل الأول للتطبيق
-    updateDOM();
-</script>
-</body>
-</html>
+        if(type === 'out') {

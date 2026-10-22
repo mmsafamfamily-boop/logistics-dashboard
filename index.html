@@ -2,24 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الشاملة في المستودع 📦</title>
+    <title>لوحة التحكم الشاملة وحاسبة اللوجستيات 📦</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f4f8; padding: 30px; margin: 0; }
         .container { max-width: 1000px; margin: 0 auto; }
         .panel { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
         
-        /* تصميم الجدول لملء الصفحة */
+        /* تصميم الجدول */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
         th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
         th { background: #f8fafc; color: #334155; font-weight: bold; }
         
-        /* الأزرار التفاعلية الصغيرة داخل الجدول */
         .btn-sm { padding: 5px 10px; font-size: 12px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; margin-left: 5px; }
         .btn-in { background: #10b981; }
         .btn-out { background: #ef4444; }
         
-        /* نموذج إضافة منتج جديد - جعلناه مرناً ليتناسب مع الخانات الجديدة */
+        /* النماذج والخانات */
         .form-group { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
         .form-group input, .form-group select { flex: 1; min-width: 150px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
         .btn-add { background: #2563eb; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; min-width: 150px; }
@@ -27,13 +26,16 @@
         .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
         .badge-success { background: #d1fae5; color: #065f46; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
+
+        /* حاسبة الوزن الحجمي */
+        .calc-result { margin-top: 15px; padding: 15px; background: #eff6ff; border-radius: 5px; border-right: 5px solid #2563eb; font-weight: bold; color: #1e40af; }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- القسم الأول: جدول جميع المنتجات الحاليين -->
+    <!-- القسم الأول: جدول إدارة المخزون -->
     <div class="panel">
         <h2>📦 جدول إدارة المخزون الفوري (All Products)</h2>
         <table>
@@ -48,49 +50,53 @@
                     <th>العمليات اللوجستية</th>
                 </tr>
             </thead>
-            <tbody id="inventory-table-body">
-                <!-- جافاسكريبت سيملاً البيانات هنا تلقائياً -->
-            </tbody>
+            <tbody id="inventory-table-body"></tbody>
         </table>
     </div>
 
-    <!-- القسم الثاني: نموذج إضافة صنف جديد للمستودع مع التعديلات الجديدة -->
+    <!-- القسم الثاني: إضافة منتج جديد -->
     <div class="panel">
         <h2>➕ إضافة منتج جديد للمخزن (Add New Item)</h2>
         <div class="form-group">
             <input type="text" id="new-sku" placeholder="الرمز (مثال: CAP-RED)">
-            
-            <!-- خانة اختيار الفئة/النوع المضافة -->
             <select id="new-category">
                 <option value="كاب">كاب (Cap)</option>
                 <option value="قميص">قميص (Shirt)</option>
                 <option value="تيشيرت">تيشيرت (T-Shirt)</option>
-                <option value="ملحقات">ملحقات أخرى</option>
             </select>
-
-            <input type="text" id="new-name" placeholder="اسم المنتج (مثال: كاب أحمر رياضي)">
-            <input type="text" id="new-desc" placeholder="الوصف أو المقاس (مثال: فري سايز)">
-            <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 20)">
+            <input type="text" id="new-name" placeholder="اسم المنتج">
+            <input type="text" id="new-desc" placeholder="الوصف أو المقاس">
+            <input type="number" id="new-stock" placeholder="الكمية الابتدائية">
             <button class="btn-add" onclick="addNewProduct()">➕ إضافة للمستودع</button>
+        </div>
+    </div>
+
+    <!-- القسم الثالث الجديد: حاسبة الوزن الحجمي لشركات الشحن -->
+    <div class="panel">
+        <h2>⚖️ حاسبة الوزن الحجمي لشحنات كرتون المتجر (Volumetric Weight)</h2>
+        <p style="font-size: 14px; color: #475569; margin: 0 0 15px 0;">أدخل أبعاد كرتون الشحن بالسنتيمتر لحساب الوزن الحجمي الذي ستحاسبك عليه شركة الشحن:</p>
+        <div class="form-group">
+            <input type="number" id="box-length" placeholder="الطول (Length) بالسم" oninput="calculateVolumetric()">
+            <input type="number" id="box-width" placeholder="العرض (Width) بالسم" oninput="calculateVolumetric()">
+            <input type="number" id="box-height" placeholder="الارتفاع (Height) بالسم" oninput="calculateVolumetric()">
+        </div>
+        <div class="calc-result" id="volume-result">
+            الوزن الحجمي المتوقع: 0.00 كجم
         </div>
     </div>
 
 </div>
 
 <script>
-    // مصفوفة تحتوي على المنتجات الافتراضية مع الفئات والأوصاف الجديدة
     let products = [
         { sku: 'SHIRT-BLK-S', category: 'قميص', name: 'قميص أسود كلاسيك', desc: 'مقاس S', stock: 45 },
-        { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12 },
-        { sku: 'SHIRT-BLU-L', category: 'قميص', name: 'قميص أزرق كاجوال', desc: 'مقاس L', stock: 60 }
+        { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12 }
     ];
 
     function updateTable() {
         const tbody = document.getElementById('inventory-table-body');
-        tbody.innerHTML = ''; // تفريغ الجدول لإعادة بنائه بالبيانات المحدثة
-
+        tbody.innerHTML = '';
         products.forEach((product, index) => {
-            // تحديد كود الحالة لونياً (إذا أقل من 15 قطعة يعتبر منخفض)
             let statusBadge = product.stock <= 15 ? 
                 '<span class="badge badge-danger">مخزون منخفض ⚠️</span>' : 
                 '<span class="badge badge-success">متوفر ✅</span>';
@@ -112,17 +118,15 @@
         });
     }
 
-    // دالة لتعديل كمية أي منتج في الجدول مباشرة
     function changeStock(index, amount) {
         if (products[index].stock + amount >= 0) {
             products[index].stock += amount;
             updateTable();
         } else {
-            alert("لا يمكن البيع! المخزون الحالي لا يكفي الصرف.");
+            alert("المخزون لا يكفي!");
         }
     }
 
-    // دالة لإضافة منتج جديد تماماً للمصفوفة والجدول
     function addNewProduct() {
         const skuInput = document.getElementById('new-sku');
         const categoryInput = document.getElementById('new-category');
@@ -130,32 +134,36 @@
         const descInput = document.getElementById('new-desc');
         const stockInput = document.getElementById('new-stock');
 
-        // التأكد من أن المستخدم ملأ جميع الخانات الأساسية
-        if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '' || descInput.value === '') {
-            alert("الرجاء ملء جميع الخانات أولاً!");
+        if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
+            alert("الرجاء ملء الخانات الأساسية!");
             return;
         }
 
-        // إنشاء كائن المنتج الجديد وضخه داخل المصفوفة بالبيانات الجديدة
-        let newProd = {
+        products.push({
             sku: skuInput.value.toUpperCase(),
             category: categoryInput.value,
             name: nameInput.value,
-            desc: descInput.value,
+            desc: descInput.value || 'فري سايز',
             stock: parseInt(stockInput.value) || 0
-        };
+        });
 
-        products.push(newProd); // إضافة للمجموعة
-        updateTable(); // تحديث الشاشة فوراً ليرى المستخدم المنتج الجديد
-
-        // تفريغ الخانات لتصبح جاهزة لإضافة منتج آخر
-        skuInput.value = '';
-        nameInput.value = '';
-        descInput.value = '';
-        stockInput.value = '';
+        updateTable();
+        skuInput.value = ''; nameInput.value = ''; descInput.value = ''; stockInput.value = '';
     }
 
-    // تشغيل النظام فور فتح الصفحة
+    // دالة حساب الوزن الحجمي الجديدة تلقائياً عند الكتابة
+    function calculateVolumetric() {
+        const l = parseFloat(document.getElementById('box-length').value) || 0;
+        const w = parseFloat(document.getElementById('box-width').value) || 0;
+        const h = parseFloat(document.getElementById('box-height').value) || 0;
+        
+        // المعادلة العالمية: الطول × العرض × الارتفاع ÷ 5000
+        let volWeight = (l * w * h) / 5000;
+        
+        document.getElementById('volume-result').innerText = 
+            `الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم`;
+    }
+
     updateTable();
 </script>
 

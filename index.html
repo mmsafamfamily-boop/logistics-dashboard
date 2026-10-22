@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الشاملة في المستودع 📦</title>
+    <title>لوحة التحكم الشاملة وحاسبة اللوجستيات 📦</title>
     <style>
         /* تحويل خلفية الشاشة الكاملة إلى لون داكن هادئ ومريح جداً للعين */
         body { 
@@ -63,6 +63,9 @@
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; }
         .badge-success { background: #0c4a6e; color: #38bdf8; } /* تدرج أزرق ليلي للتوفر */
         .badge-danger { background: #4c0519; color: #fda4af; } /* تدرج وردي خافت للانخفاض */
+
+        /* نتيجة حاسبة الوزن الحجمي باللون الليلي المتناسق */
+        .calc-result { margin-top: 15px; padding: 15px; background: #0c4a6e; border-radius: 8px; border-right: 5px solid #38bdf8; font-weight: bold; color: #38bdf8; }
     </style>
 </head>
 <body>
@@ -104,6 +107,20 @@
             <input type="text" id="new-desc" placeholder="الوصف أو المقاس (مثال: فري سايز)">
             <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 50)">
             <button class="btn-add" onclick="addNewProduct()">➕ إضافة للمستودع</button>
+        </div>
+    </div>
+
+    <!-- القسم الثالث المستعاد: حاسبة الوزن الحجمي بالأبعاد متوافقة مع المظهر الداكن -->
+    <div class="panel">
+        <h2>⚖️ حاسبة الوزن الحجمي لشحنات كرتون المتجر (Volumetric Weight)</h2>
+        <p style="font-size: 14px; color: #94a3b8; margin: 0 0 15px 0;">أدخل أبعاد كرتون الشحن بالسنتيمتر لحساب الوزن الحجمي الذي ستحاسبك عليه شركة الشحن:</p>
+        <div class="form-group">
+            <input type="number" id="box-length" placeholder="الطول (Length) بالسم" oninput="calculateVolumetric()">
+            <input type="number" id="box-width" placeholder="العرض (Width) بالسم" oninput="calculateVolumetric()">
+            <input type="number" id="box-height" placeholder="الارتفاع (Height) بالسم" oninput="calculateVolumetric()">
+        </div>
+        <div class="calc-result" id="volume-result">
+            الوزن الحجمي المتوقع: 0.00 كجم
         </div>
     </div>
 
@@ -183,6 +200,19 @@
             products.splice(index, 1); 
             updateTable(); 
         }
+    }
+
+    // دالة حساب الوزن الحجمي تلقائياً عند الكتابة
+    function calculateVolumetric() {
+        const l = parseFloat(document.getElementById('box-length').value) || 0;
+        const w = parseFloat(document.getElementById('box-width').value) || 0;
+        const h = parseFloat(document.getElementById('box-height').value) || 0;
+        
+        // المعادلة العالمية: الطول × العرض × الارتفاع ÷ 5000
+        let volWeight = (l * w * h) / 5000;
+        
+        document.getElementById('volume-result').innerText = 
+            `الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم`;
     }
 
     updateTable();

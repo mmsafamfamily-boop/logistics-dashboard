@@ -8,36 +8,63 @@
         .box { background: white; padding: 30px; border-radius: 10px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn { background: #10b981; color: white; border: none; padding: 12px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
         .num { font-size: 48px; font-weight: bold; color: #1e3a8a; margin: 20px 0; }
+        select { width: 80%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px; font-weight: bold; }
+        label { display: block; font-size: 14px; margin-bottom: 5px; color: #555; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>لوحة تحكم المستودع التفاعلية 📦</h2>
-    <p>إجمالي قمصان المخزون الحالي (Inventory Status):</p>
-    <div class="num" id="stock-count">50</div>
+    <h2>لوحة تحكم المنتجات والمستودع 📦</h2>
+    
+    <!-- خانة اختيار المنتج -->
+    <label>اختر المنتج المراد إدارته:</label>
+    <select id="product-select" onchange="updateDisplay()">
+        <option value="black">قميص أسود (SHIRT-BLK)</option>
+        <option value="red">قميص أحمر (SHIRT-RED)</option>
+        <option value="blue">قميص أزرق (SHIRT-BLU)</option>
+    </select>
+
+    <p>المخزون الحالي للصنف المختار (Inventory Status):</p>
+    <div class="num" id="stock-count">40</div>
     
     <button class="btn" onclick="addStock()">📦 استلام توريد (+10 قطع)</button>
     <button class="btn" style="background:#ef4444;" onclick="sellStock()">🛒 تسجيل مبيعات (-5 قطع)</button>
 </div>
 
 <script>
-    let currentStock = 50;
+    // مخزن يحتوي على الكميات لكل قميص بشكل مستقل
+    let inventory = {
+        black: 40,
+        red: 25,
+        blue: 60
+    };
+
     function updateDisplay() {
-        document.getElementById('stock-count').innerText = currentStock;
+        // قراءة المنتج المختار حالياً من الخانة
+        let selectedProduct = document.getElementById('product-select').value;
+        // عرض كمية المخزون الخاصة بهذا المنتج فقط
+        document.getElementById('stock-count').innerText = inventory[selectedProduct];
     }
+
     function addStock() {
-        currentStock += 10;
+        let selectedProduct = document.getElementById('product-select').value;
+        inventory[selectedProduct] += 10; // إضافة 10 قطع للمنتج المختار
         updateDisplay();
     }
+
     function sellStock() {
-        if (currentStock >= 5) {
-            currentStock -= 5;
+        let selectedProduct = document.getElementById('product-select').value;
+        if (inventory[selectedProduct] >= 5) {
+            inventory[selectedProduct] -= 5; // خصم 5 قطع من المنتج المختار
             updateDisplay();
         } else {
-            alert("المخزون غير كافٍ للصرف!");
+            alert("المخزون غير كافٍ لصرف هذا الصنف!");
         }
     }
+
+    // تشغيل العرض الأول عند فتح الصفحة
+    updateDisplay();
 </script>
 
 </body>

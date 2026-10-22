@@ -5,7 +5,7 @@
     <title>لوحة التحكم الشاملة في المستودع 📦</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f4f8; padding: 30px; margin: 0; }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
         .panel { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
         
@@ -19,10 +19,10 @@
         .btn-in { background: #10b981; }
         .btn-out { background: #ef4444; }
         
-        /* نموذج إضافة منتج جديد */
+        /* نموذج إضافة منتج جديد - جعلناه مرناً ليتناسب مع الخانات الجديدة */
         .form-group { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
-        .form-group input { flex: 1; min-width: 150px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; }
-        .btn-add { background: #2563eb; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .form-group input, .form-group select { flex: 1; min-width: 150px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        .btn-add { background: #2563eb; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; min-width: 150px; }
         
         .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
         .badge-success { background: #d1fae5; color: #065f46; }
@@ -40,7 +40,9 @@
             <thead>
                 <tr>
                     <th>رمز المنتج (SKU)</th>
+                    <th>نوع المنتج</th>
                     <th>اسم المنتج</th>
+                    <th>الوصف / المقاس</th>
                     <th>الكمية الحالية</th>
                     <th>حالة التوفر</th>
                     <th>العمليات اللوجستية</th>
@@ -52,13 +54,23 @@
         </table>
     </div>
 
-    <!-- القسم الثاني: نموذج إضافة صنف جديد للمستودع -->
+    <!-- القسم الثاني: نموذج إضافة صنف جديد للمستودع مع التعديلات الجديدة -->
     <div class="panel">
         <h2>➕ إضافة منتج جديد للمخزن (Add New Item)</h2>
         <div class="form-group">
-            <input type="text" id="new-sku" placeholder="مثال: SHIRT-GRN-M (الرمز)">
-            <input type="text" id="new-name" placeholder="مثال: قميص أخضر - ميديوم">
-            <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 30)">
+            <input type="text" id="new-sku" placeholder="الرمز (مثال: CAP-RED)">
+            
+            <!-- خانة اختيار الفئة/النوع المضافة -->
+            <select id="new-category">
+                <option value="كاب">كاب (Cap)</option>
+                <option value="قميص">قميص (Shirt)</option>
+                <option value="تيشيرت">تيشيرت (T-Shirt)</option>
+                <option value="ملحقات">ملحقات أخرى</option>
+            </select>
+
+            <input type="text" id="new-name" placeholder="اسم المنتج (مثال: كاب أحمر رياضي)">
+            <input type="text" id="new-desc" placeholder="الوصف أو المقاس (مثال: فري سايز)">
+            <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 20)">
             <button class="btn-add" onclick="addNewProduct()">➕ إضافة للمستودع</button>
         </div>
     </div>
@@ -66,11 +78,11 @@
 </div>
 
 <script>
-    // مصفوفة تحتوي على جميع المنتجات، ويمكن زيادتها ديناميكياً
+    // مصفوفة تحتوي على المنتجات الافتراضية مع الفئات والأوصاف الجديدة
     let products = [
-        { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 45 },
-        { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 12 },
-        { sku: 'SHIRT-BLU-L', name: 'قميص أزرق - لارج', stock: 60 }
+        { sku: 'SHIRT-BLK-S', category: 'قميص', name: 'قميص أسود كلاسيك', desc: 'مقاس S', stock: 45 },
+        { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12 },
+        { sku: 'SHIRT-BLU-L', category: 'قميص', name: 'قميص أزرق كاجوال', desc: 'مقاس L', stock: 60 }
     ];
 
     function updateTable() {
@@ -86,7 +98,9 @@
             tbody.innerHTML += `
                 <tr>
                     <td><code>${product.sku}</code></td>
+                    <td><strong>${product.category}</strong></td>
                     <td>${product.name}</td>
+                    <td><span style="color: #64748b; font-size: 13px;">${product.desc}</span></td>
                     <td style="font-weight: bold;">${product.stock}</td>
                     <td>${statusBadge}</td>
                     <td>
@@ -98,7 +112,7 @@
         });
     }
 
-    // دالة لتعديل كمية أي منتج في الجدول مباشرة باستخدام ترتيبه (Index)
+    // دالة لتعديل كمية أي منتج في الجدول مباشرة
     function changeStock(index, amount) {
         if (products[index].stock + amount >= 0) {
             products[index].stock += amount;
@@ -111,19 +125,23 @@
     // دالة لإضافة منتج جديد تماماً للمصفوفة والجدول
     function addNewProduct() {
         const skuInput = document.getElementById('new-sku');
+        const categoryInput = document.getElementById('new-category');
         const nameInput = document.getElementById('new-name');
+        const descInput = document.getElementById('new-desc');
         const stockInput = document.getElementById('new-stock');
 
-        // التأكد من أن المستخدم ملأ جميع الخانات
-        if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
+        // التأكد من أن المستخدم ملأ جميع الخانات الأساسية
+        if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '' || descInput.value === '') {
             alert("الرجاء ملء جميع الخانات أولاً!");
             return;
         }
 
-        // إنشاء كائن المنتج الجديد وضخه داخل المصفوفة
+        // إنشاء كائن المنتج الجديد وضخه داخل المصفوفة بالبيانات الجديدة
         let newProd = {
             sku: skuInput.value.toUpperCase(),
+            category: categoryInput.value,
             name: nameInput.value,
+            desc: descInput.value,
             stock: parseInt(stockInput.value) || 0
         };
 
@@ -133,6 +151,7 @@
         // تفريغ الخانات لتصبح جاهزة لإضافة منتج آخر
         skuInput.value = '';
         nameInput.value = '';
+        descInput.value = '';
         stockInput.value = '';
     }
 

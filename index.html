@@ -4,40 +4,50 @@
     <meta charset="UTF-8">
     <title>لوحة التحكم الشاملة وحاسبة اللوجستيات 📦</title>
     <style>
+        /* تحويل خلفية الشاشة الكاملة إلى لون داكن هادئ ومريح جداً للعين */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background: #0f172a; 
+            background: #0f172a; /* لون كحلي داكن جداً خافت وبدون وهج */
             padding: 30px; 
             margin: 0; 
-            color: #f1f5f9; 
+            color: #f1f5f9; /* نصوص بلون أبيض عاجي ناعم */
         }
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
         
+        /* الصناديق بنفس الدرجة الداكنة المتناسقة مع حدود ناعمة جداً */
         .panel { 
-            background: #1e293b; 
+            background: #1e293b; /* أزرق داكن متناسق مع الخلفية لمنع التشتت */
             padding: 25px; 
             border-radius: 12px; 
-            border: 1px solid #334155; 
+            border: 1px solid #334155; /* حدود خافتة لتحديد الصندوق */
             margin-bottom: 25px; 
         }
         h2 { margin-top: 0; color: #f8fafc; border-bottom: 2px solid #334155; padding-bottom: 10px; font-size: 20px; }
         
+        /* تصميم الجدول المظلم */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
         th, td { padding: 14px; border-bottom: 1px solid #334155; }
         th { background: #1e293b; color: #94a3b8; font-weight: bold; }
         td { color: #cbd5e1; vertical-align: middle; }
         
-        /* تصميم مرن لخانة الكمية والأزرار داخل الجدول */
-        .action-cell { display: flex; align-items: center; gap: 8px; }
-        .qty-input { width: 60px; padding: 6px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; text-align: center; font-weight: bold; }
+        /* أزرار العمليات وخانات التحكم بالكمية داخل الجدول */
+        .action-cell { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .qty-input { width: 55px; padding: 6px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; text-align: center; font-weight: bold; }
         
-        .btn-sm { padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; color: white; transition: opacity 0.2s; }
+        /* خانات التعديل السريع داخل الجدول */
+        .edit-input { padding: 6px; border-radius: 6px; border: 1px solid #38bdf8; background: #0f172a; color: white; width: 90%; box-sizing: border-box; }
+
+        /* الأزرار التفاعلية الملونة بهدوء */
+        .btn-sm { padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; color: white; margin-left: 5px; transition: opacity 0.2s; }
         .btn-sm:hover { opacity: 0.8; }
-        .btn-in { background: #0284c7; } 
-        .btn-out { background: #e11d48; } 
-        .btn-delete { background: #475569; } 
+        .btn-in { background: #0284c7; } /* أزرق توريد */
+        .btn-out { background: #e11d48; } /* وردي صرف */
+        .btn-edit { background: #eab308; color: #0f172a; } /* أصفر للتعديل */
+        .btn-save { background: #10b981; } /* أخضر للحفظ */
+        .btn-delete { background: #475569; } /* رمادي للحذف */
         .btn-delete:hover { background: #334155; }
         
+        /* نموذج إضافة منتج جديد متوافق مع الوضع المظلم */
         .form-group { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
         .form-group input, .form-group select { 
             flex: 1; 
@@ -47,7 +57,7 @@
             border-radius: 8px; 
             font-size: 14px; 
             box-sizing: border-box;
-            background-color: #0f172a; 
+            background-color: #0f172a; /* خانات داكنة بنفس لون الخلفية العام */
             color: #f1f5f9;
         }
         .form-group input:focus, .form-group select:focus {
@@ -58,10 +68,12 @@
         .btn-add { background: #334155; color: #f1f5f9; border: 1px solid #475569; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; min-width: 150px; }
         .btn-add:hover { background: #475569; }
         
+        /* شارات الحالة الملونة الهادئة للوضع الداكن */
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; }
-        .badge-success { background: #0c4a6e; color: #38bdf8; } 
-        .badge-danger { background: #4c0519; color: #fda4af; } 
+        .badge-success { background: #0c4a6e; color: #38bdf8; } /* تدرج أزرق ليلي للتوفر */
+        .badge-danger { background: #4c0519; color: #fda4af; } /* تدرج وردي خافت للانخفاض */
 
+        /* نتيجة حاسبة الوزن الحجمي باللون الليلي المتناسق */
         .calc-result { margin-top: 15px; padding: 15px; background: #0c4a6e; border-radius: 8px; border-right: 5px solid #38bdf8; font-weight: bold; color: #38bdf8; }
     </style>
 </head>
@@ -69,7 +81,7 @@
 
 <div class="container">
     
-    <!-- القسم الأول: جدول البضائع -->
+    <!-- القسم الأول: جدول جميع المنتجات الحالية المحدث -->
     <div class="panel">
         <h2>📦 جدول إدارة المخزون الفوري (All Products)</h2>
         <table>
@@ -81,14 +93,14 @@
                     <th>الوصف / المقاس</th>
                     <th>الكمية الحالية</th>
                     <th>حالة التوفر</th>
-                    <th>العمليات اللوجستية وتحديد الكمية</th>
+                    <th>العمليات اللوجستية وتحديث البيانات</th>
                 </tr>
             </thead>
             <tbody id="inventory-table-body"></tbody>
         </table>
     </div>
 
-    <!-- القسم الثاني: إضافة منتج جديد -->
+    <!-- القسم الثاني: نموذج إضافة صنف جديد للمستودع -->
     <div class="panel">
         <h2>➕ إضافة منتج جديد للمخزن (Add New Item)</h2>
         <div class="form-group">
@@ -98,17 +110,17 @@
                 <option value="قميص">قميص (Shirt)</option>
                 <option value="تيشيرت">تيشيرت (T-Shirt)</option>
             </select>
-            <input type="text" id="new-name" placeholder="اسم المنتج">
-            <input type="text" id="new-desc" placeholder="الوصف أو المقاس">
-            <input type="number" id="new-stock" placeholder="الكمية الابتدائية">
+            <input type="text" id="new-name" placeholder="اسم المنتج (مثال: كاب أحمر رياضي)">
+            <input type="text" id="new-desc" placeholder="الوصف أو المقاس (مثال: فري سايز)">
+            <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 50)">
             <button class="btn-add" onclick="addNewProduct()">➕ إضافة للمستودع</button>
         </div>
     </div>
 
-    <!-- القسم الثالث: حاسبة الوزن الحجمي -->
+    <!-- القسم الثالث: حاسبة الوزن الحجمي بالأبعاد متوافقة مع المظهر الداكن -->
     <div class="panel">
         <h2>⚖️ حاسبة الوزن الحجمي لشحنات كرتون المتجر (Volumetric Weight)</h2>
-        <p style="font-size: 14px; color: #94a3b8; margin: 0 0 15px 0;">أدخل أبعاد كرتون الشحن بالسنتيمتر لحساب الوزن الحجمي:</p>
+        <p style="font-size: 14px; color: #94a3b8; margin: 0 0 15px 0;">أدخل أبعاد كرتون الشحن بالسنتيمتر لحساب الوزن الحجمي الذي ستحاسبك عليه شركة الشحن:</p>
         <div class="form-group">
             <input type="number" id="box-length" placeholder="الطول (Length) بالسم" oninput="calculateVolumetric()">
             <input type="number" id="box-width" placeholder="العرض (Width) بالسم" oninput="calculateVolumetric()">
@@ -122,9 +134,10 @@
 </div>
 
 <script>
+    // مصفوفة المنتجات الافتراضية
     let products = [
-        { sku: 'SHIRT-BLK-S', category: 'قميص', name: 'قميص أسود كلاسيك', desc: 'مقاس S', stock: 45 },
-        { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12 }
+        { sku: 'SHIRT-BLK-S', category: 'قميص', name: 'قميص أسود كلاسيك', desc: 'مقاس S', stock: 45, isEditing: false },
+        { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12, isEditing: false }
     ];
 
     function updateTable() {
@@ -136,89 +149,120 @@
                 '<span class="badge badge-danger">مخزون منخفض ⚠️</span>' : 
                 '<span class="badge badge-success">متوفر ✅</span>';
 
-            tbody.innerHTML += `
-                <tr>
-                    <td><code style="color:#38bdf8; font-weight:bold;">${product.sku}</code></td>
-                    <td><strong>${product.category}</strong></td>
-                    <td>${product.name}</td>
-                    <td><span style="color: #94a3b8; font-size: 13px;">${product.desc}</span></td>
-                    <td style="font-weight: bold; font-size: 16px; color: #f8fafc;">${product.stock}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <div class="action-cell">
-                            <!-- خانة كتابة الكمية الديناميكية المضافة لكل سطر -->
-                            <input type="number" class="qty-input" id="qty-${index}" value="1" min="1">
-                            <button class="btn-sm btn-in" onclick="changeStock(${index}, 'in')">📦 توريد</button>
-                            <button class="btn-sm btn-out" onclick="changeStock(${index}, 'out')">🛒 صرف</button>
-                            <button class="btn-sm btn-delete" onclick="deleteProduct(${index})">🗑️ إلغاء</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    // تعديل الدالة لتقرأ الرقم المكتوب في الخانة فور الضغط على الزر
-    function changeStock(index, type) {
-        const qtyInput = document.getElementById(`qty-${index}`);
-        const userQty = parseInt(qtyInput.value) || 0;
-
-        if (userQty <= 0) {
-            alert("الرجاء كتابة كمية صحيحة أكبر من صفر!");
-            return;
-        }
-
-        if (type === 'in') {
-            products[index].stock += userQty; // زيادة الكمية التي كتبها المستخدم
-        } else if (type === 'out') {
-            if (products[index].stock >= userQty) {
-                products[index].stock -= userQty; // خصم الكمية التي كتبها المستخدم
+            // إذا كان السطر في وضع التعديل النشط
+            if (product.isEditing) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><code>${product.sku}</code></td>
+                        <td>
+                            <select id="edit-cat-${index}" class="edit-input">
+                                <option value="كاب" ${product.category==='كاب'?'selected':''}>كاب</option>
+                                <option value="قميص" ${product.category==='قميص'?'selected':''}>قميص</option>
+                                <option value="تيشيرت" ${product.category==='تيشيرت'?'selected':''}>تيشيرت</option>
+                            </select>
+                        </td>
+                        <td><input type="text" id="edit-name-${index}" class="edit-input" value="${product.name}"></td>
+                        <td><input type="text" id="edit-desc-${index}" class="edit-input" value="${product.desc}"></td>
+                        <td style="font-weight: bold; font-size: 16px;">${product.stock}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-cell">
+                                <button class="btn-sm btn-save" onclick="saveProduct(${index})">💾 حفظ</button>
+                                <button class="btn-sm btn-delete" onclick="toggleEdit(${index}, false)">❌ إلغاء</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
             } else {
-                alert("لا يمكن الصرف! المخزون الحالي أقل من الكمية المطلوبة.");
-            }
-        }
-        updateTable();
-    }
+                // العرض الطبيعي المستقر للمنتج
+                tbody.innerHTML += `
+                    <tr>
+                        <td><code style="color:#38bdf8; font-weight:bold;">${product.sku}</code></td>
+                        <td><strong>${product.category}</strong></td>
+                        <td>${product.name}</td>
+                        <td><span style="color: #94a3b8; font-size: 13px;">${product.desc}</span></td>
+                        <td style="font-weight: bold; font-size: 16px; color: #f8fafc;">${product.stock}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-cell">
+                                <input type="number" class="qty-input" id="qty-${index}" value="1" min="1">
+                                <button class="btn-sm btn-in" onclick="changeStock(${index}, 'in')">📦 توريد</button>
+                                <button class="btn-sm btn-out" onclick="changeStock(${index}, 'out')">🛒 صرف</button>
+                                <button class="btn-sm btn-edit" onclick="toggleEdit(${index}, true)">✏️ تعديل</button>
+Use code with caution.
+🗑️ حذف
 
-    function addNewProduct() {
-        const skuInput = document.getElementById('new-sku');
-        const categoryInput = document.getElementById('new-category');
-        const nameInput = document.getElementById('new-name');
-        const descInput = document.getElementById('new-desc');
-        const stockInput = document.getElementById('new-stock');
 
-        if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
-            alert("الرجاء ملء الرمز واسم المنتج والكمية أولاً!");
-            return;
-        }
 
-        products.push({
-            sku: skuInput.value.toUpperCase(),
-            category: categoryInput.value,
-            name: nameInput.value,
-            desc: descInput.value || 'فري سايز',
-            stock: parseInt(stockInput.value) || 0
-        }); 
-        updateTable(); 
-        skuInput.value = ''; nameInput.value = ''; descInput.value = ''; stockInput.value = '';
-    }
-
-    function deleteProduct(index) {
-        if (confirm("هل أنت متأكد من حذف هذا الصنف تماماً؟")) {
-            products.splice(index, 1); 
-            updateTable(); 
-        }
-    }
-
-    function calculateVolumetric() {
-        const l = parseFloat(document.getElementById('box-length').value) || 0;
-        const w = parseFloat(document.getElementById('box-width').value) || 0;
-        const h = parseFloat(document.getElementById('box-height').value) || 0;
-        let volWeight = (l * w * h) / 5000;
-        document.getElementById('volume-result').innerText = `الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم`;
-    }
-
-    updateTable();
-</script>
-</body>
-</html>
+`;
+}
+});
+}
+// دالة للتبديل بين وضع العرض ووضع التعديل
+function toggleEdit(index, status) {
+products[index].isEditing = status;
+updateTable();
+}
+// دالة لحفظ التعديلات الجديدة للمنتج
+function saveProduct(index) {
+products[index].category = document.getElementById(edit-cat-${index}).value;
+products[index].name = document.getElementById(edit-name-${index}).value;
+products[index].desc = document.getElementById(edit-desc-${index}).value;
+products[index].isEditing = false;
+updateTable();
+}
+// دالة لتعديل كمية المخزون ديناميكياً بناءً على رغبة المستخدم
+function changeStock(index, type) {
+const qtyInput = document.getElementById(qty-${index});
+const userQty = parseInt(qtyInput.value) || 0;
+if (userQty <= 0) return alert("الرجاء كتابة كمية صحيحة!");
+if (type === 'in') {
+products[index].stock += userQty;
+} else if (type === 'out') {
+if (products[index].stock >= userQty) {
+products[index].stock -= userQty;
+} else {
+alert("المخزون الحالي لا يكفي!");
+}
+}
+updateTable();
+}
+// دالة لإضافة منتج جديد تماماً للمستودع
+function addNewProduct() {
+const skuInput = document.getElementById('new-sku');
+const categoryInput = document.getElementById('new-category');
+const nameInput = document.getElementById('new-name');
+const descInput = document.getElementById('new-desc');
+const stockInput = document.getElementById('new-stock');
+if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
+return alert("الرجاء ملء الرمز واسم المنتج والكمية أولاً!");
+}
+products.push({
+sku: skuInput.value.toUpperCase(),
+category: categoryInput.value,
+name: nameInput.value,
+desc: descInput.value || 'فري سايز',
+stock: parseInt(stockInput.value) || 0,
+isEditing: false
+});
+updateTable();
+skuInput.value = ''; nameInput.value = ''; descInput.value = ''; stockInput.value = '';
+}
+// دالة لحذف وإلغاء المنتج تماماً
+function deleteProduct(index) {
+if (confirm("هل أنت متأكد من حذف هذا الصنف تماماً؟")) {
+products.splice(index, 1);
+updateTable();
+}
+}
+// دالة حساب الوزن الحجمي تلقائياً عند الكتابة
+function calculateVolumetric() {
+const l = parseFloat(document.getElementById('box-length').value) || 0;
+const w = parseFloat(document.getElementById('box-width').value) || 0;
+const h = parseFloat(document.getElementById('box-height').value) || 0;
+let volWeight = (l * w * h) / 5000;
+document.getElementById('volume-result').innerText =
+الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم;
+}
+// التشغيل التلقائي للنظام
+updateTable();

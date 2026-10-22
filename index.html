@@ -1,256 +1,341 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم اللوجستيات - متجر أناقة للتدريب</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #c0392b;
-            --light: #f8f9fa;
-            --dark: #34495e;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f3;
-            margin: 0;
-            padding: 20px;
-            color: var(--dark);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 { margin: 0; font-size: 24px; }
-        .subtitle { font-size: 14px; opacity: 0.8; margin-top: 5px; }
-        
-        /* كروت الإحصائيات */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--primary);
-        }
-        .card.success { border-right-color: var(--success); }
-        .card.warning { border-right-color: var(--warning); }
-        .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #7f8c8d; }
-        .card .number { font-size: 28px; font-weight: bold; color: var(--dark); }
-
-        /* منطقة العمليات والجدول */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-        }
-        @media (max-width: 768px) {
-            .main-content { grid-template-columns: 1fr; }
-        }
-        .panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .panel h2 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        
-        /* الجدول */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            text-align: right;
-        }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-        th { background-color: var(--light); color: var(--dark); }
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .badge.success { background-color: #d4edda; color: var(--success); }
-        .badge.warning { background-color: #fff3cd; color: #d98200; }
-
-        /* لوحة التحكم التفاعلية */
-        .actions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.2s;
-            text-align: center;
-        }
-        .btn:hover { filter: brightness(1.2); }
-        .btn-success { background-color: var(--success); }
-        .btn-warning { background-color: var(--warning); }
-        
-        .log-box {
-            margin-top: 15px;
-            background: #222;
-            color: #00ff00;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            border-radius: 4px;
-            height: 100px;
-            overflow-y: auto;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم اللوجستيات - متجر أناقة للتدريب</title>
+<meta name="theme-color" content="#5b8fb9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --primary:#5b8fb9; --primary-dark:#3f6f98;
+  --success:#3f9d78; --success-bg:#e0f3ea;
+  --warning:#d98f1f; --warning-bg:#fdf0d5;
+  --danger:#cf5f55;
+  --bg:#f3f7fa; --panel:#fff; --line:#e3eaf0;
+  --text:#34495e; --muted:#7b8d9e;
+}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);margin:0;padding:20px;color:var(--text)}
+.container{max-width:1200px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--primary),#79a8cb);color:#fff;padding:20px;border-radius:12px;margin-bottom:24px;box-shadow:0 3px 10px rgba(91,143,185,.25);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px}
+.subtitle{font-size:14px;opacity:.9;margin-top:5px}
+.header-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.saved{font-size:12px;background:rgba(255,255,255,.22);padding:5px 10px;border-radius:20px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:26px}
+.card{background:var(--panel);padding:18px 20px;border-radius:10px;box-shadow:0 1px 4px rgba(52,73,94,.08);border-right:5px solid var(--primary);position:relative}
+.card.success{border-right-color:var(--success)}
+.card.warning{border-right-color:var(--warning)}
+.card h3{margin:0 0 10px;font-size:14px;color:var(--muted);font-weight:600}
+.card .number{font-size:28px;font-weight:bold}
+.card .edit-stat{position:absolute;left:12px;top:12px}
+.main-content{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+@media(max-width:800px){.main-content{grid-template-columns:1fr}body{padding:12px}}
+.panel{background:var(--panel);padding:20px;border-radius:10px;box-shadow:0 1px 4px rgba(52,73,94,.08)}
+.panel h2{margin:0;font-size:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:2px solid var(--line);padding-bottom:12px;flex-wrap:wrap}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:12px;text-align:right}
+th,td{padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f0f5f9;font-size:13px}
+tbody tr:hover{background:#f8fbfd}
+.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block}
+.badge.success{background:var(--success-bg);color:#2b7a58}
+.badge.warning{background:var(--warning-bg);color:#a86a0c}
+.empty{text-align:center;color:var(--muted);padding:24px}
+.actions-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.btn{background:var(--primary);color:#fff;border:none;padding:11px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;font-family:inherit;transition:background .15s}
+.btn:hover{background:var(--primary-dark)}
+.btn:focus-visible,.icon-btn:focus-visible,input:focus-visible{outline:3px solid #9cc3e0;outline-offset:2px}
+.btn-success{background:var(--success)} .btn-success:hover{background:#2f8463}
+.btn-warning{background:var(--warning)} .btn-warning:hover{background:#b97616}
+.btn-danger{background:var(--danger)} .btn-danger:hover{background:#b44b42}
+.btn-ghost{background:rgba(255,255,255,.2);color:#fff} .btn-ghost:hover{background:rgba(255,255,255,.34)}
+.btn-light{background:#e8f0f6;color:var(--primary-dark)} .btn-light:hover{background:#d8e6f0}
+.btn-sm{padding:6px 12px;font-size:13px}
+.icon-btn{background:#e8f0f6;color:var(--primary-dark);border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit;font-size:13px}
+.icon-btn:hover{background:#d8e6f0}
+h3.logs-title{margin:20px 0 0;font-size:15px}
+.log-box{margin-top:10px;background:#f0f5f9;color:#3a5063;border:1px solid var(--line);padding:10px;font-family:Consolas,monospace;font-size:12px;border-radius:8px;height:130px;overflow-y:auto;line-height:1.7}
+dialog{border:none;border-radius:12px;padding:0;width:min(420px,92vw);box-shadow:0 10px 40px rgba(52,73,94,.3);color:var(--text)}
+dialog::backdrop{background:rgba(52,73,94,.4)}
+dialog form{padding:22px;display:flex;flex-direction:column;gap:12px}
+dialog h2{margin:0 0 4px;font-size:18px}
+label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:5px}
+input{padding:10px;border:1px solid #cfdbe5;border-radius:6px;font-size:14px;font-family:inherit;background:#fbfdfe}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlg-actions{display:flex;gap:8px;margin-top:6px}
+.dlg-actions .spacer{flex:1}
+.error{color:var(--danger);font-size:13px;min-height:18px}
+.hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+</style>
 </head>
 <body>
-
 <div class="container">
-    <header>
-        <h1>لوحة تحكم إدارة اللوجستيات (بيئة تدريبية)</h1>
-        <div class="subtitle">متجر قمصان "أناقة" الناشئ - نظام محاكاة المستودع والشحن</div>
-    </header>
+  <header>
+    <div>
+      <h1>لوحة تحكم إدارة اللوجستيات (بيئة تدريبية)</h1>
+      <div class="subtitle">متجر قمصان "أناقة" الناشئ - نظام محاكاة المستودع والشحن</div>
+    </div>
+    <div class="header-tools">
+      <span class="saved" id="saved">💾 الحفظ تلقائي</span>
+      <button class="btn btn-ghost btn-sm" id="install-btn" hidden>⬇️ تثبيت على اللابتوب</button>
+    </div>
+  </header>
 
-    <!-- كروت البيانات الإجمالية -->
-    <div class="cards-grid">
-        <div class="card">
-            <h3>إجمالي المخزون (Total Stock)</h3>
-            <div class="number" id="total-stock">80</div>
-        </div>
-        <div class="card success">
-            <h3>الطلبات المشحونة (Out)</h3>
-            <div class="number" id="total-out">37</div>
-        </div>
-        <div class="card warning">
-            <h3>المهلة الزمنية المعتادة</h3>
-            <div class="number">10 أيام</div>
-        </div>
+  <div class="cards-grid">
+    <div class="card">
+      <h3>إجمالي المخزون (Total Stock)</h3>
+      <div class="number" id="total-stock">0</div>
+    </div>
+    <div class="card success">
+      <h3>الطلبات المشحونة (Out)</h3>
+      <div class="number" id="total-out">0</div>
+    </div>
+    <div class="card warning">
+      <h3>المهلة الزمنية المعتادة</h3>
+      <div class="number"><span id="lead-days">10</span> أيام</div>
+      <button class="icon-btn edit-stat" id="edit-stats-btn">✏️ تعديل</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>حالة المخزون الحالي (Inventory Status)</h2>
+        <button class="btn btn-sm" id="add-btn">➕ إضافة منتج</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رمز المنتج (SKU)</th><th>اسم المنتج</th><th>المخزون الحالي</th><th>حد إعادة الطلب</th><th>الحالة</th><th>تعديل</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="main-content">
-        <!-- جدول المستودع -->
-        <div class="panel">
-            <h2>حالة المخزون الحالي (Inventory Status)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>رمز المنتج (SKU)</th>
-                        <th>اسم المنتج</th>
-                        <th>المخزون الحالي</th>
-                        <th>حد إعادة الطلب</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody id="inventory-table">
-                    <!-- سيتم ملؤه بواسطة الجافاسكريبت -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- لوحة التحكم في المحاكاة -->
-        <div class="panel">
-            <h2>محاكاة العمليات اللوجستية</h2>
-            <div class="actions-list">
-                <button class="btn btn-success" onclick="simulateSale()">🛒 محاكاة عملية بيع (Out)</button>
-                <button class="btn btn-warning" onclick="simulateReceiving()">📦 محاكاة استلام شحنة (In)</button>
-            </div>
-            <h3>سجل العمليات الأخير (Logs)</h3>
-            <div class="log-box" id="log-box">
-                [نظام]: النظام جاهز ومستعد للمحاكاة...
-            </div>
-        </div>
+    <div class="panel">
+      <div class="panel-head"><h2>محاكاة العمليات اللوجستية</h2></div>
+      <div class="actions-list">
+        <button class="btn btn-success" id="sale-btn">🛒 محاكاة عملية بيع (Out)</button>
+        <button class="btn btn-warning" id="recv-btn">📦 محاكاة استلام شحنة (In)</button>
+      </div>
+      <h3 class="logs-title">سجل العمليات الأخير (Logs)</h3>
+      <div class="log-box" id="log-box"></div>
+      <div class="hint">التعديلات تُحفظ تلقائياً في هذا المتصفح.</div>
+      <button class="btn btn-light btn-sm" id="reset-btn" style="margin-top:10px">↩️ استرجاع البيانات الأصلية</button>
     </div>
+  </div>
 </div>
 
+<dialog id="product-dlg">
+  <form id="product-form" novalidate>
+    <h2 id="dlg-title">تعديل المنتج</h2>
+    <label>رمز المنتج (SKU)<input id="f-sku" required dir="ltr" style="text-align:right"></label>
+    <label>اسم المنتج<input id="f-name" required></label>
+    <div class="row2">
+      <label>المخزون الحالي<input id="f-stock" type="number" min="0" step="1" required></label>
+      <label>حد إعادة الطلب<input id="f-reorder" type="number" min="0" step="1" required></label>
+    </div>
+    <div class="error" id="f-error"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-success" type="submit">حفظ التعديلات</button>
+      <button class="btn btn-light" type="button" id="cancel-btn">إلغاء</button>
+      <span class="spacer"></span>
+      <button class="btn btn-danger" type="button" id="delete-btn">حذف</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="stats-dlg">
+  <form id="stats-form" novalidate>
+    <h2>تعديل الإحصائيات</h2>
+    <label>الطلبات المشحونة (Out)<input id="s-out" type="number" min="0" step="1" required></label>
+    <label>المهلة الزمنية المعتادة (بالأيام)<input id="s-lead" type="number" min="1" step="1" required></label>
+    <div class="error" id="s-error"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-success" type="submit">حفظ</button>
+      <button class="btn btn-light" type="button" id="s-cancel">إلغاء</button>
+    </div>
+  </form>
+</dialog>
+
 <script>
-    // البيانات الافتراضية للمخزن
-    let products = [
-        { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 50, reorder: 10 },
-        { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 30, reorder: 8 }
-    ];
-    let totalOut = 37;
+const KEY = 'logistics-dashboard-v1';
+const DEFAULTS = {
+  products: [
+    { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 50, reorder: 10 },
+    { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 30, reorder: 8 }
+  ],
+  totalOut: 37,
+  leadDays: 10,
+  logs: ['[نظام]: النظام جاهز ومستعد للمحاكاة...']
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    function updateDOM() {
-        const tbody = document.getElementById('inventory-table');
-        tbody.innerHTML = '';
-        let totalStock = 0;
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.products)) return Object.assign(clone(DEFAULTS), s);
+  } catch (e) {}
+  return clone(DEFAULTS);
+}
+let state = load();
+let editIndex = -1;
 
-        products.forEach(p => {
-            totalStock += p.stock;
-            let statusBadge = p.stock <= p.reorder ? 
-                `<span class="badge warning">مخزون منخفض ⚠️</span>` : 
-                `<span class="badge success">متوفر ✅</span>`;
-            
-            tbody.innerHTML += `
-                <tr>
-                    <td><code>${p.sku}</code></td>
-                    <td>${p.name}</td>
-                    <td><strong>${p.stock}</strong></td>
-                    <td>${p.reorder}</td>
-                    <td>${statusBadge}</td>
-                </tr>
-            `;
-        });
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state));
+    $('saved').textContent = '✅ تم الحفظ ' + new Date().toLocaleTimeString('ar-EG', {hour12:false});
+  } catch (e) {
+    $('saved').textContent = '⚠️ تعذّر الحفظ في هذا المتصفح';
+  }
+}
 
-        document.getElementById('total-stock').innerText = totalStock;
-        document.getElementById('total-out').innerText = totalOut;
-    }
+function render() {
+  const tbody = $('inventory-table');
+  let total = 0;
+  if (!state.products.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">لا توجد منتجات. اضغط «إضافة منتج» للبدء.</td></tr>';
+  } else {
+    tbody.innerHTML = state.products.map((p, i) => {
+      total += p.stock;
+      const low = p.stock <= p.reorder;
+      const badge = low ? '<span class="badge warning">مخزون منخفض ⚠️</span>' : '<span class="badge success">متوفر ✅</span>';
+      return `<tr>
+        <td><code>${esc(p.sku)}</code></td><td>${esc(p.name)}</td>
+        <td><strong>${p.stock}</strong></td><td>${p.reorder}</td><td>${badge}</td>
+        <td><button class="icon-btn" data-edit="${i}">✏️ تعديل</button></td></tr>`;
+    }).join('');
+  }
+  $('total-stock').textContent = total;
+  $('total-out').textContent = state.totalOut;
+  $('lead-days').textContent = state.leadDays;
+  $('log-box').innerHTML = state.logs.map(l => esc(l)).join('<br>');
+}
 
-    function addLog(message) {
-        const logBox = document.getElementById('log-box');
-        const time = new Date().toLocaleTimeString('ar-EG', {hour12:false});
-        logBox.innerHTML = `[${time}] ${message}<br>` + logBox.innerHTML;
-    }
+function addLog(msg) {
+  const time = new Date().toLocaleTimeString('ar-EG', {hour12:false});
+  state.logs.unshift(`[${time}] ${msg}`);
+  state.logs = state.logs.slice(0, 40);
+}
 
-    // محاكاة بيع قميص
-    function simulateSale() {
-        // نختار منتج عشوائي للبيع
-        let p = products[Math.floor(Math.random() * products.length)];
-        if(p.stock > 0) {
-            p.stock -= 1;
-            totalOut += 1;
-            addLog(`عملية بيع ناجحة! تم سحب وتغليف (Picking & Packing) للمنتج ${p.sku}`);
-            updateDOM();
-        } else {
-            addLog(`فشلت العملية: المنتج ${p.sku} نفذ تماماً من المخزن!`);
-        }
-    }
+function commit() { save(); render(); }
 
-    // محاكاة استلام بضاعة جديدة
-    function simulateReceiving() {
-        let p = products[Math.floor(Math.random() * products.length)];
-        let qty = 20; // نستلم 20 قطعة جديدة
-        p.stock += qty;
-        addLog(`استلام بضاعة (Receiving): تم توريد +${qty} قطع للمنتج ${p.sku}`);
-        updateDOM();
-    }
+/* المحاكاة */
+$('sale-btn').onclick = () => {
+  if (!state.products.length) return;
+  const p = state.products[Math.floor(Math.random() * state.products.length)];
+  if (p.stock > 0) {
+    p.stock -= 1; state.totalOut += 1;
+    addLog(`عملية بيع ناجحة! تم سحب وتغليف (Picking & Packing) للمنتج ${p.sku}`);
+  } else {
+    addLog(`فشلت العملية: المنتج ${p.sku} نفذ تماماً من المخزن!`);
+  }
+  commit();
+};
+$('recv-btn').onclick = () => {
+  if (!state.products.length) return;
+  const p = state.products[Math.floor(Math.random() * state.products.length)];
+  p.stock += 20;
+  addLog(`استلام بضاعة (Receiving): تم توريد +20 قطع للمنتج ${p.sku}`);
+  commit();
+};
 
-    // التشغيل الأول للتطبيق
-    updateDOM();
+/* تعديل / إضافة منتج */
+function openProduct(i) {
+  editIndex = i;
+  const p = i >= 0 ? state.products[i] : { sku: '', name: '', stock: 0, reorder: 5 };
+  $('dlg-title').textContent = i >= 0 ? 'تعديل المنتج' : 'إضافة منتج جديد';
+  $('f-sku').value = p.sku; $('f-name').value = p.name;
+  $('f-stock').value = p.stock; $('f-reorder').value = p.reorder;
+  $('f-error').textContent = '';
+  $('delete-btn').hidden = i < 0;
+  $('product-dlg').showModal();
+  $('f-name').focus();
+}
+$('add-btn').onclick = () => openProduct(-1);
+$('inventory-table').addEventListener('click', e => {
+  const b = e.target.closest('[data-edit]');
+  if (b) openProduct(+b.dataset.edit);
+});
+$('cancel-btn').onclick = () => $('product-dlg').close();
+$('product-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const sku = $('f-sku').value.trim(), name = $('f-name').value.trim();
+  const stock = Number($('f-stock').value), reorder = Number($('f-reorder').value);
+  let err = '';
+  if (!sku || !name) err = 'اكتب رمز المنتج واسمه.';
+  else if (!Number.isInteger(stock) || stock < 0 || !Number.isInteger(reorder) || reorder < 0) err = 'المخزون وحد إعادة الطلب أرقام صحيحة من 0 فأكثر.';
+  else if (state.products.some((p, i) => i !== editIndex && p.sku.toLowerCase() === sku.toLowerCase())) err = 'رمز المنتج مستخدم مسبقاً.';
+  if (err) { $('f-error').textContent = err; return; }
+  const item = { sku, name, stock, reorder };
+  if (editIndex >= 0) { state.products[editIndex] = item; addLog(`تم تعديل المنتج ${sku}`); }
+  else { state.products.push(item); addLog(`تمت إضافة منتج جديد ${sku}`); }
+  $('product-dlg').close();
+  commit();
+});
+$('delete-btn').onclick = () => {
+  const p = state.products[editIndex];
+  if (p && confirm(`حذف المنتج ${p.sku}؟`)) {
+    state.products.splice(editIndex, 1);
+    addLog(`تم حذف المنتج ${p.sku}`);
+    $('product-dlg').close();
+    commit();
+  }
+};
+
+/* تعديل الإحصائيات */
+$('edit-stats-btn').onclick = () => {
+  $('s-out').value = state.totalOut; $('s-lead').value = state.leadDays;
+  $('s-error').textContent = '';
+  $('stats-dlg').showModal();
+};
+$('s-cancel').onclick = () => $('stats-dlg').close();
+$('stats-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const out = Number($('s-out').value), lead = Number($('s-lead').value);
+  if (!Number.isInteger(out) || out < 0 || !Number.isInteger(lead) || lead < 1) {
+    $('s-error').textContent = 'أدخل أرقاماً صحيحة صالحة.'; return;
+  }
+  state.totalOut = out; state.leadDays = lead;
+  addLog('تم تعديل الإحصائيات');
+  $('stats-dlg').close();
+  commit();
+});
+
+/* استرجاع الأصل */
+$('reset-btn').onclick = () => {
+  if (confirm('سيتم مسح كل تعديلاتك والرجوع للبيانات الأصلية. متأكد؟')) {
+    state = clone(DEFAULTS); commit();
+  }
+};
+
+/* تثبيت التطبيق (PWA) */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e; $('install-btn').hidden = false;
+});
+$('install-btn').onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null; $('install-btn').hidden = true;
+};
+window.addEventListener('appinstalled', () => { $('install-btn').hidden = true; });
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+render();
 </script>
 </body>
 </html>

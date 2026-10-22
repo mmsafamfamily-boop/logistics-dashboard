@@ -2,23 +2,26 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الشاملة وحاسبة اللوجستيات 📦</title>
+    <title>لوحة التحكم الشاملة في المستودع 📦</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f4f8; padding: 30px; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; }
+        .container { max-width: 1100px; margin: 0 auto; }
         .panel { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
         
-        /* تصميم الجدول */
+        /* تصميم الجدول لملء الصفحة */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
         th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
         th { background: #f8fafc; color: #334155; font-weight: bold; }
         
+        /* الأزرار التفاعلية الصغيرة داخل الجدول */
         .btn-sm { padding: 5px 10px; font-size: 12px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; margin-left: 5px; }
         .btn-in { background: #10b981; }
         .btn-out { background: #ef4444; }
+        .btn-delete { background: #64748b; } /* زر الحذف الرمادي */
+        .btn-delete:hover { background: #b91c1c; } /* يتحول للأحمر عند تقريب الماوس */
         
-        /* النماذج والخانات */
+        /* نموذج إضافة منتج جديد */
         .form-group { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
         .form-group input, .form-group select { flex: 1; min-width: 150px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
         .btn-add { background: #2563eb; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; min-width: 150px; }
@@ -26,16 +29,13 @@
         .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
         .badge-success { background: #d1fae5; color: #065f46; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
-
-        /* حاسبة الوزن الحجمي */
-        .calc-result { margin-top: 15px; padding: 15px; background: #eff6ff; border-radius: 5px; border-right: 5px solid #2563eb; font-weight: bold; color: #1e40af; }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- القسم الأول: جدول إدارة المخزون -->
+    <!-- القسم الأول: جدول جميع المنتجات الحاليين -->
     <div class="panel">
         <h2>📦 جدول إدارة المخزون الفوري (All Products)</h2>
         <table>
@@ -50,11 +50,13 @@
                     <th>العمليات اللوجستية</th>
                 </tr>
             </thead>
-            <tbody id="inventory-table-body"></tbody>
+            <tbody id="inventory-table-body">
+                <!-- جافاسكريبت سيملاً البيانات هنا تلقائياً -->
+            </tbody>
         </table>
     </div>
 
-    <!-- القسم الثاني: إضافة منتج جديد -->
+    <!-- القسم الثاني: نموذج إضافة صنف جديد للمستودع -->
     <div class="panel">
         <h2>➕ إضافة منتج جديد للمخزن (Add New Item)</h2>
         <div class="form-group">
@@ -64,30 +66,20 @@
                 <option value="قميص">قميص (Shirt)</option>
                 <option value="تيشيرت">تيشيرت (T-Shirt)</option>
             </select>
-            <input type="text" id="new-name" placeholder="اسم المنتج">
-            <input type="text" id="new-desc" placeholder="الوصف أو المقاس">
-            <input type="number" id="new-stock" placeholder="الكمية الابتدائية">
+            <input type="text" id="new-name" placeholder="اسم المنتج (مثال: كاب أحمر رياضي)">
+            <input type="text" id="new-desc" placeholder="الوصف أو المقاس (مثال: فري سايز)">
+            
+            <!-- خانة تحديد الكمية الابتدائية عند الإضافة المفعّلة -->
+            <input type="number" id="new-stock" placeholder="الكمية الابتدائية (مثال: 50)">
+            
             <button class="btn-add" onclick="addNewProduct()">➕ إضافة للمستودع</button>
-        </div>
-    </div>
-
-    <!-- القسم الثالث الجديد: حاسبة الوزن الحجمي لشركات الشحن -->
-    <div class="panel">
-        <h2>⚖️ حاسبة الوزن الحجمي لشحنات كرتون المتجر (Volumetric Weight)</h2>
-        <p style="font-size: 14px; color: #475569; margin: 0 0 15px 0;">أدخل أبعاد كرتون الشحن بالسنتيمتر لحساب الوزن الحجمي الذي ستحاسبك عليه شركة الشحن:</p>
-        <div class="form-group">
-            <input type="number" id="box-length" placeholder="الطول (Length) بالسم" oninput="calculateVolumetric()">
-            <input type="number" id="box-width" placeholder="العرض (Width) بالسم" oninput="calculateVolumetric()">
-            <input type="number" id="box-height" placeholder="الارتفاع (Height) بالسم" oninput="calculateVolumetric()">
-        </div>
-        <div class="calc-result" id="volume-result">
-            الوزن الحجمي المتوقع: 0.00 كجم
         </div>
     </div>
 
 </div>
 
 <script>
+    // مصفوفة المنتجات الافتراضية
     let products = [
         { sku: 'SHIRT-BLK-S', category: 'قميص', name: 'قميص أسود كلاسيك', desc: 'مقاس S', stock: 45 },
         { sku: 'CAP-WHT-F', category: 'كاب', name: 'كاب صيفي أبيض', desc: 'فري سايز', stock: 12 }
@@ -95,7 +87,8 @@
 
     function updateTable() {
         const tbody = document.getElementById('inventory-table-body');
-        tbody.innerHTML = '';
+        tbody.innerHTML = ''; 
+
         products.forEach((product, index) => {
             let statusBadge = product.stock <= 15 ? 
                 '<span class="badge badge-danger">مخزون منخفض ⚠️</span>' : 
@@ -112,21 +105,25 @@
                     <td>
                         <button class="btn-sm btn-in" onclick="changeStock(${index}, 10)">📦 توريد +10</button>
                         <button class="btn-sm btn-out" onclick="changeStock(${index}, -5)">🛒 بيع -5</button>
+                        <!-- زر حذف وإلغاء المنتج المضاف الجديد -->
+                        <button class="btn-sm btn-delete" onclick="deleteProduct(${index})">🗑️ إلغاء صنف</button>
                     </td>
                 </tr>
             `;
         });
     }
 
+    // دالة لتعديل كمية أي منتج في الجدول
     function changeStock(index, amount) {
         if (products[index].stock + amount >= 0) {
             products[index].stock += amount;
             updateTable();
         } else {
-            alert("المخزون لا يكفي!");
+            alert("لا يمكن البيع! المخزون الحالي لا يكفي الصرف.");
         }
     }
 
+    // دالة لإضافة منتج جديد تماماً مع قراءة كميته المدخلة
     function addNewProduct() {
         const skuInput = document.getElementById('new-sku');
         const categoryInput = document.getElementById('new-category');
@@ -135,33 +132,34 @@
         const stockInput = document.getElementById('new-stock');
 
         if (skuInput.value === '' || nameInput.value === '' || stockInput.value === '') {
-            alert("الرجاء ملء الخانات الأساسية!");
+            alert("الرجاء ملء الرمز واسم المنتج والكمية أولاً!");
             return;
         }
 
-        products.push({
+        let newProd = {
             sku: skuInput.value.toUpperCase(),
             category: categoryInput.value,
             name: nameInput.value,
             desc: descInput.value || 'فري سايز',
-            stock: parseInt(stockInput.value) || 0
-        });
+            stock: parseInt(stockInput.value) || 0 // هنا يتم قراءة الكمية المدخلة وحفظها
+        };
 
-        updateTable();
-        skuInput.value = ''; nameInput.value = ''; descInput.value = ''; stockInput.value = '';
+        products.push(newProd); 
+        updateTable(); 
+
+        // تفريغ الخانات
+        skuInput.value = '';
+        nameInput.value = '';
+        descInput.value = '';
+        stockInput.value = '';
     }
 
-    // دالة حساب الوزن الحجمي الجديدة تلقائياً عند الكتابة
-    function calculateVolumetric() {
-        const l = parseFloat(document.getElementById('box-length').value) || 0;
-        const w = parseFloat(document.getElementById('box-width').value) || 0;
-        const h = parseFloat(document.getElementById('box-height').value) || 0;
-        
-        // المعادلة العالمية: الطول × العرض × الارتفاع ÷ 5000
-        let volWeight = (l * w * h) / 5000;
-        
-        document.getElementById('volume-result').innerText = 
-            `الوزن الحجمي المتوقع: ${volWeight.toFixed(2)} كجم`;
+    // دالة حذف وإلغاء المنتج الجديدة تماماً
+    function deleteProduct(index) {
+        if (confirm("هل أنت متأكد من إلغاء وحذف هذا الصنف من المستودع تماماً؟")) {
+            products.splice(index, 1); // حذف منتج واحد من المصفوفة بناءً على ترتيبه
+            updateTable(); // إعادة بناء الجدول بعد الحذف
+        }
     }
 
     updateTable();

@@ -4,74 +4,101 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة تحكم اللوجستيات - متجر أناقة للتدريب</title>
-<meta name="theme-color" content="#1b2228">
+<meta name="theme-color" content="#2a0b1a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
   color-scheme:dark;
-  --primary:#4a7aa3; --primary-dark:#3d6685;
-  --success:#3f8a68; --success-bg:#21392d;
-  --warning:#a8721d; --warning-bg:#41331a;
-  --danger:#b4544b;
-  --bg:#1b2228; --panel:#252e36; --line:#37444e;
-  --text:#d4dce2; --muted:#93a4b0;
+  --gold:#e8b95a; --gold-hover:#f2cb7a; --on-gold:#2a0b1a;
+  --bg1:#63213a; --bg2:#792946; --header:#2a0b1a;
+  --panel:#3a1326; --panel-2:#4a1a31; --line:#6b2c47;
+  --success:#3f8a68; --success-bg:#1f3a2c; --success-text:#9fdcb9;
+  --warning:#c07a2a; --warning-bg:#5a3f12; --warning-text:#f2cb7a;
+  --danger:#b4443f;
+  --text:#f3e6dc; --muted:#c9a9b3;
 }
 *{box-sizing:border-box}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);margin:0;padding:20px;color:var(--text)}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg1) linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;min-height:100vh;margin:0;padding:20px;color:var(--text)}
 .container{max-width:1200px;margin:0 auto}
-header{background:linear-gradient(135deg,#2b4156,#3a566d);color:#fff;padding:20px;border-radius:12px;margin-bottom:24px;box-shadow:0 3px 12px rgba(0,0,0,.4);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-h1{margin:0;font-size:24px}
-.subtitle{font-size:14px;opacity:.9;margin-top:5px}
+header{background:var(--header);color:var(--text);padding:20px;border-radius:12px;margin-bottom:24px;border-bottom:3px solid var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.35);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;color:var(--gold)}
+.subtitle{font-size:14px;color:var(--muted);margin-top:5px}
 .header-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.saved{font-size:12px;background:rgba(255,255,255,.22);padding:5px 10px;border-radius:20px}
+.saved{font-size:12px;background:rgba(232,185,90,.15);color:var(--gold);padding:5px 10px;border-radius:20px;border:1px solid rgba(232,185,90,.35)}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:26px}
-.card{background:var(--panel);padding:18px 20px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.35);border-right:5px solid var(--primary);position:relative}
-.card.success{border-right-color:var(--success)}
-.card.warning{border-right-color:var(--warning)}
+.card{background:var(--panel);padding:18px 20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:1px solid var(--line);border-right:5px solid var(--gold);position:relative}
+.card.success{border-right-color:#d77a95}
+.card.warning{border-right-color:#c99a4b}
 .card h3{margin:0 0 10px;font-size:14px;color:var(--muted);font-weight:600}
-.card .number{font-size:28px;font-weight:bold}
+.card .number{font-size:28px;font-weight:bold;color:var(--text)}
 .card .edit-stat{position:absolute;left:12px;top:12px}
 .main-content{display:grid;grid-template-columns:2fr 1fr;gap:24px}
 @media(max-width:800px){.main-content{grid-template-columns:1fr}body{padding:12px}}
-.panel{background:var(--panel);padding:20px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.35)}
-.panel h2{margin:0;font-size:18px}
+.panel{background:var(--panel);padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);border:1px solid var(--line)}
+.panel h2{margin:0;font-size:18px;color:var(--gold)}
 .panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:2px solid var(--line);padding-bottom:12px;flex-wrap:wrap}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;margin-top:12px;text-align:right}
 th,td{padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{background:#2d3841;font-size:13px}
-tbody tr:hover{background:#2b363f}
+th{background:var(--panel-2);color:var(--gold);font-size:13px}
+tbody tr:hover{background:#44182c}
+code{color:var(--gold-hover)}
 .badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block}
-.badge.success{background:var(--success-bg);color:#8fd3b0}
-.badge.warning{background:var(--warning-bg);color:#e8c077}
+.badge.success{background:var(--success-bg);color:var(--success-text)}
+.badge.warning{background:var(--warning-bg);color:var(--warning-text)}
 .empty{text-align:center;color:var(--muted);padding:24px}
 .actions-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
-.btn{background:var(--primary);color:#fff;border:none;padding:11px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;font-family:inherit;transition:background .15s}
-.btn:hover{background:#5a8cb5}
-.btn:focus-visible,.icon-btn:focus-visible,input:focus-visible{outline:3px solid #6f9bc0;outline-offset:2px}
-.btn-success{background:var(--success)} .btn-success:hover{background:#4a9c77}
-.btn-warning{background:var(--warning)} .btn-warning:hover{background:#b9822a}
-.btn-danger{background:var(--danger)} .btn-danger:hover{background:#c46258}
-.btn-ghost{background:rgba(255,255,255,.2);color:#fff} .btn-ghost:hover{background:rgba(255,255,255,.34)}
-.btn-light{background:#34424d;color:#c5d4df} .btn-light:hover{background:#3f505d}
+.btn{background:var(--gold);color:var(--on-gold);border:none;padding:11px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;font-family:inherit;transition:background .15s}
+.btn:hover{background:var(--gold-hover)}
+.btn:focus-visible,.icon-btn:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn-success{background:#a63f5f;color:#fff4ec;border:1px solid #d77a95} .btn-success:hover{background:#b94c6d}
+.btn-warning{background:#4a1a31;color:var(--gold);border:1px solid var(--gold)} .btn-warning:hover{background:#5d2340}
+.btn-danger{background:var(--danger);color:#fff} .btn-danger:hover{background:#c8544f}
+.btn-ghost{background:rgba(232,185,90,.15);color:var(--gold);border:1px solid rgba(232,185,90,.4)} .btn-ghost:hover{background:rgba(232,185,90,.28)}
+.btn-light{background:var(--panel-2);color:var(--text);border:1px solid var(--line)} .btn-light:hover{background:#5a2239}
 .btn-sm{padding:6px 12px;font-size:13px}
-.icon-btn{background:#34424d;color:#c5d4df;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit;font-size:13px}
-.icon-btn:hover{background:#3f505d}
-h3.logs-title{margin:20px 0 0;font-size:15px}
-.log-box{margin-top:10px;background:#1a2026;color:#b5c7d3;border:1px solid var(--line);padding:10px;font-family:Consolas,monospace;font-size:12px;border-radius:8px;height:130px;overflow-y:auto;line-height:1.7}
-dialog{background:var(--panel);border:none;border-radius:12px;padding:0;width:min(420px,92vw);box-shadow:0 10px 40px rgba(0,0,0,.6);color:var(--text)}
-dialog::backdrop{background:rgba(0,0,0,.6)}
+.icon-btn{background:var(--panel-2);color:var(--gold);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit;font-size:13px}
+.icon-btn:hover{background:#5a2239}
+h3.logs-title{margin:20px 0 0;font-size:15px;color:var(--gold)}
+.log-box{margin-top:10px;background:var(--header);color:#e8c9a0;border:1px solid var(--line);padding:10px;font-family:Consolas,monospace;font-size:12px;border-radius:8px;height:130px;overflow-y:auto;line-height:1.7}
+dialog{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:0;width:min(420px,92vw);box-shadow:0 10px 40px rgba(0,0,0,.65);color:var(--text)}
+dialog::backdrop{background:rgba(20,4,12,.7)}
 dialog form{padding:22px;display:flex;flex-direction:column;gap:12px}
-dialog h2{margin:0 0 4px;font-size:18px}
-label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:5px}
-input{padding:10px;border:1px solid #475763;border-radius:6px;font-size:14px;font-family:inherit;background:#1b2228;color:var(--text)}
+dialog h2{margin:0 0 4px;font-size:18px;color:var(--gold)}
+label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:5px;color:var(--muted)}
+input{padding:10px;border:1px solid #84405c;border-radius:6px;font-size:14px;font-family:inherit;background:var(--header);color:var(--text)}
+input:focus{border-color:var(--gold)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .dlg-actions{display:flex;gap:8px;margin-top:6px}
 .dlg-actions .spacer{flex:1}
-.error{color:var(--danger);font-size:13px;min-height:18px}
+.error{color:#ff9d94;font-size:13px;min-height:18px}
 .hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+
+.calc-panel{margin-top:24px}
+.calc-settings{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+label.inline{flex-direction:row;align-items:center;gap:8px}
+.tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.tab{background:var(--panel-2);color:var(--text);border:1px solid var(--line);padding:10px 16px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:bold}
+.tab:hover{background:#5a2239}
+.tab[aria-selected="true"]{background:var(--gold);color:var(--on-gold);border-color:var(--gold)}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+.group-title{font-size:13px;color:var(--gold);margin:14px 0 8px;font-weight:bold}
+select{padding:10px;border:1px solid #84405c;border-radius:6px;font-size:14px;font-family:inherit;background:var(--header);color:var(--text)}
+select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px;padding-top:16px;border-top:2px solid var(--line)}
+.res{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.res .l{font-size:12px;color:var(--muted);margin-bottom:6px}
+.res .v{font-size:20px;font-weight:bold;color:var(--text)}
+.res.main{border-color:var(--gold);background:#552038}
+.res.main .v{color:var(--gold);font-size:24px}
+.res.neg .v{color:#ff9d94}
+.res.pos .v{color:var(--success-text)}
+.res.note{grid-column:1/-1;color:var(--warning-text);background:var(--warning-bg);border-color:transparent;font-size:14px}
+.calc-actions{margin-top:14px}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -133,6 +160,49 @@ input{padding:10px;border:1px solid #475763;border-radius:6px;font-size:14px;fon
       <button class="btn btn-light btn-sm" id="reset-btn" style="margin-top:10px">↩️ استرجاع البيانات الأصلية</button>
     </div>
   </div>
+  <section class="panel calc-panel" id="calc">
+    <div class="panel-head">
+      <h2>🧮 الحاسبات</h2>
+      <div class="calc-settings">
+        <label class="inline">العملة <input data-g="root" data-k="currency" style="width:90px"></label>
+        <label class="inline">الخانات العشرية
+          <select data-g="root" data-k="dec"><option>0</option><option>1</option><option>2</option><option>3</option></select>
+        </label>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tab-price" role="tab" data-tab="price">💰 حاسبة أسعار البيع والشراء</button>
+      <button class="tab" id="tab-ship" role="tab" data-tab="ship">🚚 حاسبة الشحن</button>
+    </div>
+
+    <div id="pane-price">
+      <div class="fields" id="price-fields"></div>
+      <div class="fields">
+        <label>طريقة الحساب
+          <select data-g="price" data-k="mode">
+            <option value="target">أعرف الربح المطلوب ← أحسب سعر البيع</option>
+            <option value="sell">أعرف سعر البيع ← أحسب الربح</option>
+          </select>
+        </label>
+        <label id="basis-wrap">الربح يُحسب كـ
+          <select data-g="price" data-k="basis">
+            <option value="margin">هامش من سعر البيع</option>
+            <option value="markup">نسبة على التكلفة</option>
+          </select>
+        </label>
+        <label id="target-wrap">نسبة الربح المطلوبة %<input data-g="price" data-k="target" inputmode="decimal" autocomplete="off"></label>
+        <label id="sell-wrap">سعر البيع للقطعة<input data-g="price" data-k="sell" inputmode="decimal" autocomplete="off"></label>
+      </div>
+      <div class="results" id="price-results"></div>
+    </div>
+
+    <div id="pane-ship">
+      <div id="ship-fields"></div>
+      <div class="results" id="ship-results"></div>
+      <div class="calc-actions"><button class="btn btn-sm" id="ship-to-price">➡️ استخدم الشحن للقطعة في حاسبة الأسعار</button></div>
+    </div>
+    <div class="hint">يمكنك كتابة الأرقام بالعربية أو الإنجليزية. المدخلات تُحفظ تلقائياً.</div>
+  </section>
 </div>
 
 <dialog id="product-dlg">
@@ -176,7 +246,12 @@ const DEFAULTS = {
   ],
   totalOut: 37,
   leadDays: 10,
-  logs: ['[نظام]: النظام جاهز ومستعد للمحاكاة...']
+  logs: ['[نظام]: النظام جاهز ومستعد للمحاكاة...'],
+  calc: {
+    tab: 'price', currency: 'د.ك', dec: 3,
+    price: { buy: '', ship: '', other: '', qty: '1', fee: '0', mode: 'target', basis: 'margin', target: '30', sell: '' },
+    ship: { wpiece: '0.25', pieces: '1', pack: '0.1', L: '', W: '', H: '', div: '5000', first: '', firstKg: '1', extra: '', step: '0.5', sur: '0', cod: '0' }
+  }
 };
 const clone = o => JSON.parse(JSON.stringify(o));
 const $ = id => document.getElementById(id);
@@ -185,7 +260,11 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && Array.isArray(s.products)) return Object.assign(clone(DEFAULTS), s);
+    if (s && Array.isArray(s.products)) {
+      const st = Object.assign(clone(DEFAULTS), s), d = DEFAULTS.calc, c = s.calc || {};
+      st.calc = Object.assign(clone(d), c, { price: Object.assign(clone(d.price), c.price), ship: Object.assign(clone(d.ship), c.ship) });
+      return st;
+    }
   } catch (e) {}
   return clone(DEFAULTS);
 }
@@ -316,7 +395,7 @@ $('stats-form').addEventListener('submit', e => {
 /* استرجاع الأصل */
 $('reset-btn').onclick = () => {
   if (confirm('سيتم مسح كل تعديلاتك والرجوع للبيانات الأصلية. متأكد؟')) {
-    state = clone(DEFAULTS); commit();
+    state = clone(DEFAULTS); commit(); syncCalc();
   }
 };
 
@@ -337,6 +416,119 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 
 render();
+
+/* ===== الحاسبات ===== */
+const AR = '٠١٢٣٤٥٦٧٨٩';
+function num(v) {
+  const t = String(v == null ? '' : v).replace(/[٠-٩]/g, d => AR.indexOf(d)).replace(/[٫,،]/g, '.').replace(/[^0-9.\-]/g, '');
+  const n = parseFloat(t);
+  return isFinite(n) ? n : 0;
+}
+const C = () => state.calc;
+const fmt = (v, d) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const money = v => fmt(v, +C().dec) + ' ' + C().currency;
+const pct = v => fmt(v * 100, 1) + '%';
+const res = (l, v, cls = '') => `<div class="res ${cls}"><div class="l">${esc(l)}</div><div class="v">${esc(v)}</div></div>`;
+const note = t => `<div class="res note">${esc(t)}</div>`;
+
+const priceFields = [
+  ['buy', 'سعر الشراء للقطعة'], ['ship', 'الشحن للقطعة'], ['other', 'تكاليف أخرى للقطعة (تغليف...)'],
+  ['qty', 'الكمية'], ['fee', 'عمولة / رسوم على البيع %']
+];
+const shipGroups = [
+  ['الشحنة', [['wpiece', 'وزن القطعة الواحدة (كجم)'], ['pieces', 'عدد القطع في الشحنة'], ['pack', 'وزن التغليف (كجم)']]],
+  ['الأبعاد (اختياري - للوزن الحجمي)', [['L', 'الطول (سم)'], ['W', 'العرض (سم)'], ['H', 'الارتفاع (سم)'], ['div', 'قاسم الوزن الحجمي']]],
+  ['تسعيرة شركة الشحن', [['first', 'سعر أول وزن'], ['firstKg', 'الوزن المشمول في السعر الأول (كجم)'], ['extra', 'سعر الكجم الإضافي'],
+    ['step', 'تقريب الوزن لأعلى كل', [['0.1', '0.1 كجم'], ['0.5', '0.5 كجم'], ['1', '1 كجم']]],
+    ['sur', 'رسوم وقود / إضافية %'], ['cod', 'رسوم الدفع عند الاستلام (ثابت)']]]
+];
+function fieldHTML(g, [k, label, opts]) {
+  if (opts) return `<label>${label}<select data-g="${g}" data-k="${k}">${opts.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('')}</select></label>`;
+  return `<label>${label}<input data-g="${g}" data-k="${k}" inputmode="decimal" autocomplete="off"></label>`;
+}
+$('price-fields').innerHTML = priceFields.map(f => fieldHTML('price', f)).join('');
+$('ship-fields').innerHTML = shipGroups.map(([t, fs]) =>
+  `<div class="group-title">${t}</div><div class="fields">${fs.map(f => fieldHTML('ship', f)).join('')}</div>`).join('');
+
+function calcPrice() {
+  const p = C().price, f = num(p.fee) / 100, qty = Math.max(num(p.qty), 1);
+  const cost = num(p.buy) + num(p.ship) + num(p.other);
+  const target = p.mode === 'target';
+  $('basis-wrap').hidden = $('target-wrap').hidden = !target;
+  $('sell-wrap').hidden = target;
+  let P = 0, msg = '';
+  if (target) {
+    const t = num(p.target) / 100;
+    if (cost <= 0) msg = 'أدخل سعر الشراء أولاً لحساب سعر البيع.';
+    else if (p.basis === 'margin') { if (f + t >= 1) msg = 'العمولة + هامش الربح لا يمكن أن يبلغا 100% أو أكثر.'; else P = cost / (1 - f - t); }
+    else { if (f >= 1) msg = 'العمولة لا يمكن أن تبلغ 100%.'; else P = cost * (1 + t) / (1 - f); }
+  } else P = num(p.sell);
+  if (msg) { $('price-results').innerHTML = note(msg); return; }
+  const fees = P * f, profit = P - fees - cost;
+  const margin = P > 0 ? profit / P : 0, markup = cost > 0 ? profit / cost : 0;
+  const sign = profit < 0 ? 'neg' : 'pos';
+  $('price-results').innerHTML =
+    res('سعر البيع للقطعة', money(P), 'main') +
+    res('تكلفة القطعة', money(cost)) +
+    res('الربح للقطعة', money(profit), sign) +
+    res('هامش الربح (من سعر البيع)', pct(margin), sign) +
+    res('نسبة الربح على التكلفة', pct(markup), sign) +
+    res('سعر التعادل', f < 1 ? money(cost / (1 - f)) : '—') +
+    (f > 0 ? res('العمولة للقطعة', money(fees)) : '') +
+    (qty > 1 ? res(`إجمالي الإيراد (${fmt(qty, 0)} قطعة)`, money(P * qty)) + res('إجمالي التكلفة', money(cost * qty)) + res('إجمالي الربح', money(profit * qty), sign) : '') +
+    (profit < 0 ? note('تنبيه: سعر البيع أقل من التكلفة، أنت تبيع بخسارة.') : '');
+}
+
+let lastShip = { total: 0, per: 0 };
+function calcShip() {
+  const s = C().ship, pieces = Math.max(num(s.pieces), 0);
+  const actual = pieces * num(s.wpiece) + num(s.pack);
+  const vol = num(s.div) > 0 ? num(s.L) * num(s.W) * num(s.H) / num(s.div) : 0;
+  const charged = Math.max(actual, vol);
+  const step = num(s.step) || 0.5;
+  const rounded = charged > 0 ? Math.ceil(charged / step - 1e-9) * step : 0;
+  const base = rounded > 0 ? num(s.first) + Math.max(0, rounded - num(s.firstKg)) * num(s.extra) : 0;
+  const total = rounded > 0 ? base * (1 + num(s.sur) / 100) + num(s.cod) : 0;
+  const per = pieces > 0 ? total / pieces : 0;
+  lastShip = { total, per };
+  $('ship-results').innerHTML =
+    res('تكلفة الشحن للشحنة', money(total), 'main') +
+    res('الشحن للقطعة', money(per), 'main') +
+    res('الوزن الفعلي', fmt(actual, 2) + ' كجم') +
+    res('الوزن الحجمي', vol > 0 ? fmt(vol, 2) + ' كجم' : '—') +
+    res('الوزن المحتسب (بعد التقريب)', fmt(rounded, 2) + ' كجم') +
+    (num(s.first) <= 0 ? note('أدخل «سعر أول وزن» حسب تسعيرة شركة الشحن لتظهر التكلفة.') : '');
+}
+
+function syncTab() {
+  const t = C().tab === 'ship' ? 'ship' : 'price';
+  ['price', 'ship'].forEach(n => {
+    $('pane-' + n).hidden = n !== t;
+    $('tab-' + n).setAttribute('aria-selected', n === t);
+  });
+}
+function calcAll() { calcPrice(); calcShip(); }
+function syncCalc() {
+  document.querySelectorAll('[data-g]').forEach(el => {
+    const tgt = el.dataset.g === 'root' ? C() : C()[el.dataset.g];
+    el.value = String(tgt[el.dataset.k]);
+  });
+  syncTab(); calcAll();
+}
+document.addEventListener('input', e => {
+  const el = e.target, g = el.dataset && el.dataset.g;
+  if (!g) return;
+  const tgt = g === 'root' ? C() : C()[g];
+  tgt[el.dataset.k] = el.dataset.k === 'dec' ? Math.min(3, Math.max(0, num(el.value))) : el.value;
+  save(); calcAll();
+});
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { C().tab = b.dataset.tab; save(); syncTab(); });
+$('ship-to-price').onclick = () => {
+  C().price.ship = String(+lastShip.per.toFixed(+C().dec));
+  C().tab = 'price'; save(); syncCalc();
+  $('price-fields').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+syncCalc();
 </script>
 </body>
 </html>

@@ -99,6 +99,16 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
 .res.note{grid-column:1/-1;color:var(--warning-text);background:var(--warning-bg);border-color:transparent;font-size:14px}
 .calc-actions{margin-top:14px}
 [hidden]{display:none!important}
+
+.badge.out{background:#5a1f38;color:#f5b3c6}
+.badge.danger{background:#5c2020;color:#ffb3aa}
+.card.green{border-right-color:var(--success)}
+.card .sub{font-size:12px;color:var(--muted);margin-top:6px}
+.card .number.sm{font-size:21px}
+.preview{font-size:13px;color:var(--muted);background:var(--header);padding:8px 10px;border-radius:6px}
+.preview.bad{color:#ff9d94}
+.mv-panel{margin-top:24px}
+td bdi{font-weight:bold}
 </style>
 </head>
 <body>
@@ -128,6 +138,20 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
       <div class="number"><span id="lead-days">10</span> أيام</div>
       <button class="icon-btn edit-stat" id="edit-stats-btn">✏️ تعديل</button>
     </div>
+    <div class="card green">
+      <h3>قيمة المخزون (بسعر الشراء)</h3>
+      <div class="number sm" id="val-cost">0</div>
+    </div>
+    <div class="card">
+      <h3>الربح المتوقع من المخزون</h3>
+      <div class="number sm" id="val-exp">0</div>
+      <div class="sub" id="val-exp-sub"></div>
+    </div>
+    <div class="card green">
+      <h3>الأرباح المحققة من المبيعات</h3>
+      <div class="number sm" id="val-real">0</div>
+      <div class="sub" id="val-rev"></div>
+    </div>
   </div>
 
   <div class="main-content">
@@ -140,7 +164,7 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
         <table>
           <thead>
             <tr>
-              <th>رمز المنتج (SKU)</th><th>اسم المنتج</th><th>المخزون الحالي</th><th>حد إعادة الطلب</th><th>الحالة</th><th>تعديل</th>
+              <th>رمز المنتج (SKU)</th><th>اسم المنتج</th><th>المخزون</th><th>حد إعادة الطلب</th><th>سعر الشراء</th><th>سعر البيع</th><th>الهامش</th><th>الحالة</th><th>إجراءات</th>
             </tr>
           </thead>
           <tbody id="inventory-table"></tbody>
@@ -149,17 +173,43 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
     </div>
 
     <div class="panel">
-      <div class="panel-head"><h2>محاكاة العمليات اللوجستية</h2></div>
+      <div class="panel-head"><h2>العمليات اللوجستية</h2></div>
       <div class="actions-list">
-        <button class="btn btn-success" id="sale-btn">🛒 محاكاة عملية بيع (Out)</button>
-        <button class="btn btn-warning" id="recv-btn">📦 محاكاة استلام شحنة (In)</button>
+        <button class="btn btn-success" id="out-btn">🛒 تسجيل بيع / إخراج (Out)</button>
+        <button class="btn btn-warning" id="in-btn">📦 تسجيل استلام / إدخال (In)</button>
       </div>
-      <h3 class="logs-title">سجل العمليات الأخير (Logs)</h3>
-      <div class="log-box" id="log-box"></div>
+      <h3 class="logs-title">💾 النسخ الاحتياطي</h3>
+      <div class="actions-list" style="margin-top:10px">
+        <button class="btn btn-light btn-sm" id="export-btn">⬇️ تصدير نسخة احتياطية (JSON)</button>
+        <button class="btn btn-light btn-sm" id="import-btn">⬆️ استيراد نسخة احتياطية</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+      </div>
+      <div class="hint" id="backup-info"></div>
       <div class="hint">التعديلات تُحفظ تلقائياً في هذا المتصفح.</div>
       <button class="btn btn-light btn-sm" id="reset-btn" style="margin-top:10px">↩️ استرجاع البيانات الأصلية</button>
     </div>
   </div>
+
+  <section class="panel mv-panel" id="movements">
+    <div class="panel-head">
+      <h2>📒 سجل الحركات</h2>
+      <div class="calc-settings">
+        <input id="mv-search" placeholder="بحث (منتج / ملاحظة)" style="width:190px">
+        <select id="mv-filter">
+          <option value="all">كل الحركات</option><option value="in">إدخال</option><option value="out">إخراج</option><option value="adjust">تعديل</option>
+        </select>
+        <button class="btn btn-light btn-sm" id="mv-csv">📄 تصدير CSV</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>التاريخ</th><th>المنتج</th><th>النوع</th><th>الكمية</th><th>السبب</th><th>سعر الوحدة</th><th>الإجمالي</th><th>ملاحظة</th></tr></thead>
+        <tbody id="mv-body"></tbody>
+      </table>
+    </div>
+    <div class="calc-actions"><button class="btn btn-light btn-sm" id="mv-more" hidden>عرض المزيد</button></div>
+  </section>
+
   <section class="panel calc-panel" id="calc">
     <div class="panel-head">
       <h2>🧮 الحاسبات</h2>
@@ -214,12 +264,40 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
       <label>المخزون الحالي<input id="f-stock" type="number" min="0" step="1" required></label>
       <label>حد إعادة الطلب<input id="f-reorder" type="number" min="0" step="1" required></label>
     </div>
+    <div class="row2">
+      <label>سعر الشراء<input id="f-buy" inputmode="decimal" autocomplete="off"></label>
+      <label>سعر البيع<input id="f-sell" inputmode="decimal" autocomplete="off"></label>
+    </div>
     <div class="error" id="f-error"></div>
     <div class="dlg-actions">
       <button class="btn btn-success" type="submit">حفظ التعديلات</button>
       <button class="btn btn-light" type="button" id="cancel-btn">إلغاء</button>
       <span class="spacer"></span>
       <button class="btn btn-danger" type="button" id="delete-btn">حذف</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="move-dlg">
+  <form id="move-form" novalidate>
+    <h2>تسجيل حركة مخزون</h2>
+    <div class="row2">
+      <label>نوع الحركة
+        <select id="m-type"><option value="out">إخراج (Out)</option><option value="in">إدخال (In)</option></select>
+      </label>
+      <label>السبب<select id="m-reason"></select></label>
+    </div>
+    <label>المنتج<select id="m-prod"></select></label>
+    <div class="row2">
+      <label>الكمية<input id="m-qty" inputmode="numeric" autocomplete="off"></label>
+      <label>سعر الوحدة<input id="m-price" inputmode="decimal" autocomplete="off"></label>
+    </div>
+    <label>ملاحظة (اختياري: اسم العميل / رقم الطلب / المورد)<input id="m-note" maxlength="200"></label>
+    <div class="preview" id="m-preview"></div>
+    <div class="error" id="m-error"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-success" type="submit">تسجيل الحركة</button>
+      <button class="btn btn-light" type="button" id="m-cancel">إلغاء</button>
     </div>
   </form>
 </dialog>
@@ -239,104 +317,200 @@ select:focus,select:focus-visible{outline:3px solid var(--gold);outline-offset:2
 
 <script>
 const KEY = 'logistics-dashboard-v1';
+const AR = '٠١٢٣٤٥٦٧٨٩';
+function num(v) {
+  const t = String(v == null ? '' : v).replace(/[٠-٩]/g, d => AR.indexOf(d)).replace(/[٫,،]/g, '.').replace(/[^0-9.\-]/g, '');
+  const n = parseFloat(t);
+  return isFinite(n) ? n : 0;
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 const DEFAULTS = {
   products: [
-    { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 50, reorder: 10 },
-    { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 30, reorder: 8 }
+    { sku: 'SHIRT-BLK-S', name: 'قميص أسود - سمول', stock: 50, reorder: 10, buy: 3, sell: 7 },
+    { sku: 'SHIRT-RED-M', name: 'قميص أحمر - ميديوم', stock: 30, reorder: 8, buy: 3.5, sell: 8 }
   ],
   totalOut: 37,
   leadDays: 10,
-  logs: ['[نظام]: النظام جاهز ومستعد للمحاكاة...'],
+  movements: [],
+  lastBackup: null,
   calc: {
     tab: 'price', currency: 'د.ك', dec: 3,
     price: { buy: '', ship: '', other: '', qty: '1', fee: '0', mode: 'target', basis: 'margin', target: '30', sell: '' },
     ship: { wpiece: '0.25', pieces: '1', pack: '0.1', L: '', W: '', H: '', div: '5000', first: '', firstKg: '1', extra: '', step: '0.5', sur: '0', cod: '0' }
   }
 };
-const clone = o => JSON.parse(JSON.stringify(o));
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+function normalize(s) {
+  if (!s || !Array.isArray(s.products)) return null;
+  const d = clone(DEFAULTS), c = s.calc || {};
+  const n0 = v => Math.max(0, Math.floor(num(v))), m0 = v => Math.max(0, num(v));
+  return {
+    products: s.products.filter(p => p && p.sku).map(p => ({
+      sku: String(p.sku).slice(0, 60), name: String(p.name || '').slice(0, 120),
+      stock: n0(p.stock), reorder: n0(p.reorder), buy: m0(p.buy), sell: m0(p.sell)
+    })),
+    totalOut: s.totalOut == null ? d.totalOut : n0(s.totalOut),
+    leadDays: Math.max(1, n0(s.leadDays) || d.leadDays),
+    movements: (Array.isArray(s.movements) ? s.movements : [])
+      .filter(m => m && m.ts && ['in', 'out', 'adjust'].includes(m.type)).slice(0, 5000)
+      .map(m => ({
+        ts: String(m.ts), sku: String(m.sku || ''), name: String(m.name || ''), type: m.type,
+        qty: m.type === 'adjust' ? Math.trunc(num(m.qty)) : n0(m.qty),
+        reason: String(m.reason || '').slice(0, 60), price: m0(m.price), cost: m0(m.cost), note: String(m.note || '').slice(0, 200)
+      })),
+    lastBackup: s.lastBackup ? String(s.lastBackup) : null,
+    calc: Object.assign(d.calc, c, { price: Object.assign(clone(d.calc.price), c.price), ship: Object.assign(clone(d.calc.ship), c.ship) })
+  };
+}
 function load() {
-  try {
-    const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && Array.isArray(s.products)) {
-      const st = Object.assign(clone(DEFAULTS), s), d = DEFAULTS.calc, c = s.calc || {};
-      st.calc = Object.assign(clone(d), c, { price: Object.assign(clone(d.price), c.price), ship: Object.assign(clone(d.ship), c.ship) });
-      return st;
-    }
-  } catch (e) {}
-  return clone(DEFAULTS);
+  try { return normalize(JSON.parse(localStorage.getItem(KEY))) || clone(DEFAULTS); } catch (e) { return clone(DEFAULTS); }
 }
 let state = load();
-let editIndex = -1;
+let editIndex = -1, mvLimit = 50;
+
+const fmtDate = iso => {
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+};
+const TL = { in: 'إدخال', out: 'إخراج', adjust: 'تعديل' };
+const REASONS = { out: ['بيع', 'تالف / فقد', 'تسوية جرد'], in: ['توريد من مورد', 'مرتجع من عميل', 'تسوية جرد'] };
 
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
-    $('saved').textContent = '✅ تم الحفظ ' + new Date().toLocaleTimeString('ar-EG', {hour12:false});
+    $('saved').textContent = '✅ تم الحفظ ' + new Date().toLocaleTimeString('ar-EG', { hour12: false });
   } catch (e) {
     $('saved').textContent = '⚠️ تعذّر الحفظ في هذا المتصفح';
   }
 }
+function commit() { save(); render(); }
+function addMovement(m) {
+  state.movements.unshift(Object.assign({ ts: new Date().toISOString(), price: 0, cost: 0, note: '' }, m));
+  state.movements = state.movements.slice(0, 5000);
+}
 
-function render() {
+/* ===== العرض ===== */
+function renderInventory() {
   const tbody = $('inventory-table');
-  let total = 0;
   if (!state.products.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">لا توجد منتجات. اضغط «إضافة منتج» للبدء.</td></tr>';
-  } else {
-    tbody.innerHTML = state.products.map((p, i) => {
-      total += p.stock;
-      const low = p.stock <= p.reorder;
-      const badge = low ? '<span class="badge warning">مخزون منخفض ⚠️</span>' : '<span class="badge success">متوفر ✅</span>';
-      return `<tr>
-        <td><code>${esc(p.sku)}</code></td><td>${esc(p.name)}</td>
-        <td><strong>${p.stock}</strong></td><td>${p.reorder}</td><td>${badge}</td>
-        <td><button class="icon-btn" data-edit="${i}">✏️ تعديل</button></td></tr>`;
-    }).join('');
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">لا توجد منتجات. اضغط «إضافة منتج» للبدء.</td></tr>';
+    return;
   }
-  $('total-stock').textContent = total;
+  tbody.innerHTML = state.products.map((p, i) => {
+    const badge = p.stock === 0 ? '<span class="badge danger">نفذ ⛔</span>'
+      : p.stock <= p.reorder ? '<span class="badge warning">مخزون منخفض ⚠️</span>' : '<span class="badge success">متوفر ✅</span>';
+    const margin = p.sell > 0 ? pct((p.sell - p.buy) / p.sell) : '—';
+    return `<tr>
+      <td><code>${esc(p.sku)}</code></td><td>${esc(p.name)}</td>
+      <td><strong>${p.stock}</strong></td><td>${p.reorder}</td>
+      <td>${p.buy > 0 ? money(p.buy) : '—'}</td><td>${p.sell > 0 ? money(p.sell) : '—'}</td><td>${margin}</td><td>${badge}</td>
+      <td><button class="icon-btn" data-edit="${i}">✏️ تعديل</button> <button class="icon-btn" data-mv="${i}">⇅ حركة</button></td></tr>`;
+  }).join('');
+}
+function renderCards() {
+  let units = 0, cost = 0, sellVal = 0;
+  state.products.forEach(p => { units += p.stock; cost += p.stock * p.buy; sellVal += p.stock * p.sell; });
+  let rev = 0, profit = 0;
+  state.movements.forEach(m => {
+    const sale = m.type === 'out' && m.reason === 'بيع', ret = m.type === 'in' && m.reason === 'مرتجع من عميل';
+    if (sale) { rev += m.price * m.qty; profit += (m.price - m.cost) * m.qty; }
+    if (ret) { rev -= m.price * m.qty; profit -= (m.price - m.cost) * m.qty; }
+  });
+  $('total-stock').textContent = units;
   $('total-out').textContent = state.totalOut;
   $('lead-days').textContent = state.leadDays;
-  $('log-box').innerHTML = state.logs.map(l => esc(l)).join('<br>');
+  $('val-cost').textContent = money(cost);
+  $('val-exp').textContent = money(sellVal - cost);
+  $('val-exp-sub').textContent = 'قيمة المخزون بسعر البيع: ' + money(sellVal);
+  $('val-real').textContent = money(profit);
+  $('val-real').style.color = profit < 0 ? '#ff9d94' : '';
+  $('val-rev').textContent = 'إيراد المبيعات المسجلة: ' + money(rev);
 }
-
-function addLog(msg) {
-  const time = new Date().toLocaleTimeString('ar-EG', {hour12:false});
-  state.logs.unshift(`[${time}] ${msg}`);
-  state.logs = state.logs.slice(0, 40);
+function filteredMoves() {
+  const f = $('mv-filter').value, q = $('mv-search').value.trim().toLowerCase();
+  return state.movements.filter(m => (f === 'all' || m.type === f) &&
+    (!q || (m.sku + ' ' + m.name + ' ' + m.note + ' ' + m.reason).toLowerCase().includes(q)));
 }
+function renderMovements() {
+  const all = filteredMoves(), rows = all.slice(0, mvLimit);
+  $('mv-body').innerHTML = rows.length ? rows.map(m => {
+    const badge = m.type === 'in' ? '<span class="badge success">إدخال</span>' : m.type === 'out' ? '<span class="badge out">إخراج</span>' : '<span class="badge warning">تعديل</span>';
+    const q = m.type === 'in' ? '+' + m.qty : m.type === 'out' ? '-' + m.qty : (m.qty > 0 ? '+' : '') + m.qty;
+    return `<tr><td>${fmtDate(m.ts)}</td><td><code>${esc(m.sku)}</code> ${esc(m.name)}</td><td>${badge}</td>
+      <td><bdi dir="ltr">${q}</bdi></td><td>${esc(m.reason)}</td>
+      <td>${m.price > 0 ? money(m.price) : '—'}</td><td>${m.type !== 'adjust' && m.price > 0 ? money(m.price * m.qty) : '—'}</td><td>${esc(m.note) || '—'}</td></tr>`;
+  }).join('') : '<tr><td colspan="8" class="empty">لا توجد حركات مطابقة. سجّل أول حركة من «العمليات اللوجستية».</td></tr>';
+  $('mv-more').hidden = all.length <= mvLimit;
+}
+function renderBackupInfo() {
+  $('backup-info').textContent = state.lastBackup
+    ? 'آخر نسخة احتياطية: ' + fmtDate(state.lastBackup)
+    : 'لم تأخذ نسخة احتياطية بعد ⚠️ — بياناتك محفوظة في هذا المتصفح فقط.';
+}
+function render() { renderInventory(); renderCards(); renderMovements(); renderBackupInfo(); }
 
-function commit() { save(); render(); }
-
-/* المحاكاة */
-$('sale-btn').onclick = () => {
-  if (!state.products.length) return;
-  const p = state.products[Math.floor(Math.random() * state.products.length)];
-  if (p.stock > 0) {
-    p.stock -= 1; state.totalOut += 1;
-    addLog(`عملية بيع ناجحة! تم سحب وتغليف (Picking & Packing) للمنتج ${p.sku}`);
-  } else {
-    addLog(`فشلت العملية: المنتج ${p.sku} نفذ تماماً من المخزن!`);
-  }
+/* ===== حركة مخزون ===== */
+function fillReasons() {
+  $('m-reason').innerHTML = REASONS[$('m-type').value].map(r => `<option>${r}</option>`).join('');
+}
+function autoPrice() {
+  const p = state.products[+$('m-prod').value]; if (!p) return;
+  const t = $('m-type').value, r = $('m-reason').value;
+  const v = (t === 'out' && r === 'بيع') || (t === 'in' && r === 'مرتجع من عميل') ? p.sell : p.buy;
+  $('m-price').value = v > 0 ? String(+v.toFixed(3)) : '';
+}
+function previewMove() {
+  const p = state.products[+$('m-prod').value]; if (!p) return;
+  const t = $('m-type').value, q = Math.floor(num($('m-qty').value));
+  const after = p.stock + (t === 'in' ? q : -q);
+  $('m-preview').classList.toggle('bad', after < 0);
+  $('m-preview').textContent = `المتوفر الآن: ${p.stock} ← بعد الحركة: ${after}` + (after < 0 ? ' (الكمية أكبر من المتوفر)' : '');
+}
+function openMove(type, idx) {
+  if (!state.products.length) { alert('أضف منتجاً أولاً.'); return; }
+  $('m-type').value = type; fillReasons();
+  $('m-prod').innerHTML = state.products.map((p, i) => `<option value="${i}">${esc(p.sku)} — ${esc(p.name)} (المتوفر: ${p.stock})</option>`).join('');
+  $('m-prod').value = String(idx >= 0 ? idx : 0);
+  $('m-qty').value = '1'; $('m-note').value = ''; $('m-error').textContent = '';
+  autoPrice(); previewMove();
+  $('move-dlg').showModal(); $('m-qty').select();
+}
+$('out-btn').onclick = () => openMove('out', -1);
+$('in-btn').onclick = () => openMove('in', -1);
+$('m-type').addEventListener('change', () => { fillReasons(); autoPrice(); previewMove(); });
+$('m-reason').addEventListener('change', autoPrice);
+$('m-prod').addEventListener('change', () => { autoPrice(); previewMove(); });
+$('m-qty').addEventListener('input', previewMove);
+$('m-cancel').onclick = () => $('move-dlg').close();
+$('move-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const p = state.products[+$('m-prod').value], type = $('m-type').value, reason = $('m-reason').value;
+  const qty = num($('m-qty').value), price = Math.max(0, num($('m-price').value));
+  let err = '';
+  if (!p) err = 'اختر منتجاً.';
+  else if (!Number.isInteger(qty) || qty < 1) err = 'الكمية يجب أن تكون رقماً صحيحاً 1 أو أكثر.';
+  else if (type === 'out' && qty > p.stock) err = `الكمية أكبر من المتوفر (${p.stock}).`;
+  if (err) { $('m-error').textContent = err; return; }
+  p.stock += type === 'in' ? qty : -qty;
+  if (type === 'out' && reason === 'بيع') state.totalOut += qty;
+  if (type === 'in' && reason === 'مرتجع من عميل') state.totalOut = Math.max(0, state.totalOut - qty);
+  addMovement({ type, sku: p.sku, name: p.name, qty, reason, price, cost: p.buy, note: $('m-note').value.trim() });
+  $('move-dlg').close();
   commit();
-};
-$('recv-btn').onclick = () => {
-  if (!state.products.length) return;
-  const p = state.products[Math.floor(Math.random() * state.products.length)];
-  p.stock += 20;
-  addLog(`استلام بضاعة (Receiving): تم توريد +20 قطع للمنتج ${p.sku}`);
-  commit();
-};
+});
 
-/* تعديل / إضافة منتج */
+/* ===== تعديل / إضافة منتج ===== */
+const numStr = v => v > 0 ? String(+v.toFixed(3)) : '';
 function openProduct(i) {
   editIndex = i;
-  const p = i >= 0 ? state.products[i] : { sku: '', name: '', stock: 0, reorder: 5 };
+  const p = i >= 0 ? state.products[i] : { sku: '', name: '', stock: 0, reorder: 5, buy: 0, sell: 0 };
   $('dlg-title').textContent = i >= 0 ? 'تعديل المنتج' : 'إضافة منتج جديد';
   $('f-sku').value = p.sku; $('f-name').value = p.name;
   $('f-stock').value = p.stock; $('f-reorder').value = p.reorder;
+  $('f-buy').value = numStr(p.buy); $('f-sell').value = numStr(p.sell);
   $('f-error').textContent = '';
   $('delete-btn').hidden = i < 0;
   $('product-dlg').showModal();
@@ -344,36 +518,44 @@ function openProduct(i) {
 }
 $('add-btn').onclick = () => openProduct(-1);
 $('inventory-table').addEventListener('click', e => {
-  const b = e.target.closest('[data-edit]');
+  const b = e.target.closest('[data-edit]'), m = e.target.closest('[data-mv]');
   if (b) openProduct(+b.dataset.edit);
+  else if (m) openMove('out', +m.dataset.mv);
 });
 $('cancel-btn').onclick = () => $('product-dlg').close();
 $('product-form').addEventListener('submit', e => {
   e.preventDefault();
   const sku = $('f-sku').value.trim(), name = $('f-name').value.trim();
   const stock = Number($('f-stock').value), reorder = Number($('f-reorder').value);
+  const buy = Math.max(0, num($('f-buy').value)), sell = Math.max(0, num($('f-sell').value));
   let err = '';
   if (!sku || !name) err = 'اكتب رمز المنتج واسمه.';
   else if (!Number.isInteger(stock) || stock < 0 || !Number.isInteger(reorder) || reorder < 0) err = 'المخزون وحد إعادة الطلب أرقام صحيحة من 0 فأكثر.';
   else if (state.products.some((p, i) => i !== editIndex && p.sku.toLowerCase() === sku.toLowerCase())) err = 'رمز المنتج مستخدم مسبقاً.';
   if (err) { $('f-error').textContent = err; return; }
-  const item = { sku, name, stock, reorder };
-  if (editIndex >= 0) { state.products[editIndex] = item; addLog(`تم تعديل المنتج ${sku}`); }
-  else { state.products.push(item); addLog(`تمت إضافة منتج جديد ${sku}`); }
+  const item = { sku, name, stock, reorder, buy, sell };
+  if (editIndex >= 0) {
+    const delta = stock - state.products[editIndex].stock;
+    state.products[editIndex] = item;
+    if (delta) addMovement({ type: 'adjust', sku, name, qty: delta, reason: 'تعديل يدوي', cost: buy });
+  } else {
+    state.products.push(item);
+    if (stock > 0) addMovement({ type: 'in', sku, name, qty: stock, reason: 'رصيد افتتاحي', price: buy, cost: buy });
+  }
   $('product-dlg').close();
   commit();
 });
 $('delete-btn').onclick = () => {
   const p = state.products[editIndex];
-  if (p && confirm(`حذف المنتج ${p.sku}؟`)) {
+  if (p && confirm(`حذف المنتج ${p.sku}؟ (سجل حركاته يبقى محفوظاً)`)) {
+    if (p.stock > 0) addMovement({ type: 'adjust', sku: p.sku, name: p.name, qty: -p.stock, reason: 'حذف المنتج', cost: p.buy });
     state.products.splice(editIndex, 1);
-    addLog(`تم حذف المنتج ${p.sku}`);
     $('product-dlg').close();
     commit();
   }
 };
 
-/* تعديل الإحصائيات */
+/* ===== تعديل الإحصائيات ===== */
 $('edit-stats-btn').onclick = () => {
   $('s-out').value = state.totalOut; $('s-lead').value = state.leadDays;
   $('s-error').textContent = '';
@@ -387,19 +569,60 @@ $('stats-form').addEventListener('submit', e => {
     $('s-error').textContent = 'أدخل أرقاماً صحيحة صالحة.'; return;
   }
   state.totalOut = out; state.leadDays = lead;
-  addLog('تم تعديل الإحصائيات');
   $('stats-dlg').close();
   commit();
 });
 
-/* استرجاع الأصل */
+/* ===== سجل الحركات: فلترة وتصدير ===== */
+$('mv-filter').addEventListener('change', () => { mvLimit = 50; renderMovements(); });
+$('mv-search').addEventListener('input', () => { mvLimit = 50; renderMovements(); });
+$('mv-more').onclick = () => { mvLimit += 50; renderMovements(); };
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+const csvCell = v => {
+  if (typeof v === 'number') return String(v);
+  let t = String(v == null ? '' : v);
+  if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
+  return '"' + t.replace(/"/g, '""') + '"';
+};
+$('mv-csv').onclick = () => {
+  const rows = [['التاريخ', 'SKU', 'المنتج', 'النوع', 'الكمية', 'السبب', 'سعر الوحدة', 'التكلفة', 'ملاحظة']]
+    .concat(filteredMoves().map(m => [fmtDate(m.ts), m.sku, m.name, TL[m.type], m.type === 'out' ? -m.qty : m.qty, m.reason, m.price, m.cost, m.note]));
+  download('movements-' + new Date().toISOString().slice(0, 10) + '.csv', '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'), 'text/csv;charset=utf-8');
+};
+
+/* ===== النسخ الاحتياطي ===== */
+$('export-btn').onclick = () => {
+  state.lastBackup = new Date().toISOString();
+  save(); renderBackupInfo();
+  download('logistics-backup-' + state.lastBackup.slice(0, 10) + '.json', JSON.stringify(state, null, 2), 'application/json');
+};
+$('import-btn').onclick = () => $('import-file').click();
+$('import-file').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    let ns = null;
+    try { ns = normalize(JSON.parse(r.result)); } catch (err) {}
+    if (!ns) { alert('الملف غير صالح. اختر نسخة احتياطية تم تصديرها من هذه اللوحة.'); }
+    else if (confirm(`سيتم استبدال كل البيانات الحالية بالنسخة: ${ns.products.length} منتج، ${ns.movements.length} حركة. متابعة؟`)) {
+      state = ns; save(); render(); syncCalc();
+    }
+    e.target.value = '';
+  };
+  r.readAsText(f);
+});
 $('reset-btn').onclick = () => {
-  if (confirm('سيتم مسح كل تعديلاتك والرجوع للبيانات الأصلية. متأكد؟')) {
+  if (confirm('سيتم مسح كل تعديلاتك وحركاتك والرجوع للبيانات الأصلية. متأكد؟ (يُفضّل تصدير نسخة احتياطية أولاً)')) {
     state = clone(DEFAULTS); commit(); syncCalc();
   }
 };
 
-/* تثبيت التطبيق (PWA) */
+/* ===== تثبيت التطبيق (PWA) ===== */
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e; $('install-btn').hidden = false;
@@ -415,15 +638,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-render();
-
 /* ===== الحاسبات ===== */
-const AR = '٠١٢٣٤٥٦٧٨٩';
-function num(v) {
-  const t = String(v == null ? '' : v).replace(/[٠-٩]/g, d => AR.indexOf(d)).replace(/[٫,،]/g, '.').replace(/[^0-9.\-]/g, '');
-  const n = parseFloat(t);
-  return isFinite(n) ? n : 0;
-}
 const C = () => state.calc;
 const fmt = (v, d) => v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const money = v => fmt(v, +C().dec) + ' ' + C().currency;
@@ -529,6 +744,7 @@ $('ship-to-price').onclick = () => {
   $('price-fields').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 syncCalc();
+render();
 </script>
 </body>
 </html>
